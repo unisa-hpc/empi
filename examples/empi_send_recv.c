@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv){
 
-  EMPI_Context ctx(&argc, &argv);
+  empi::Context ctx(&argc, &argv);
   
   int number = -1;
   const tag = 0;
@@ -18,7 +18,7 @@ int main(int argc, char **argv){
   }
     
   // with fixed-tag and type message context
-  ctx.submit<tag,type>([](EMPI_TagTypeContext &tt_ctx){  
+  ctx.submit<tag,type>([](empi::TagTypeContext &tt_ctx){  
     if (ctx.rank() == 0) {
       tt_ctx.send(&number, 1, 1);
     else if (ctx.rank() == 1) {
