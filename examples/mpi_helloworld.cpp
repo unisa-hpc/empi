@@ -1,5 +1,5 @@
 #include <mpi.h>  
-#include <stdio.h>
+#include <iostream>
 
 int main(int argc, char **argv){
   int myid, procs, err;
