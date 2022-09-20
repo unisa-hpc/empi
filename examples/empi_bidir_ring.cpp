@@ -13,11 +13,12 @@ int main(argc,argv) {
   const tag2 = 2;
   
    // with fixed-tag and type message context
-  ctx.runAndWait<type>([](empi::TypeWaitContext &ttw_ctx){  
-      ttw_ctx.irecv<tag1>(&buf[0], 1, prev);
-      ttw_ctx.irecv<tag2>(&buf[1], 1, next);
-      ttw_ctx.isend<tag1>(&buf[1], 1, prev);
-      ttw_ctx.isend<tag2>(&buf[0], 1, next);
+  ctx.run_and_wait<type>([](empi::MessageGroupHandler &mgh){  
+      mgh.irecv<tag1>(&buf[0], 1, prev);
+      mgh.irecv<tag2>(&buf[1], 1, next);
+      mgh.isend<tag1>(&buf[1], 1, prev);
+      mgh.isend<tag2>(&buf[0], 1, next);
   }); // Waitall is implicit here
-  return 0; // Finalize is implicti here
+  
+  return 0; // Finalize is implicit here
 }
