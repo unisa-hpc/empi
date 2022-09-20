@@ -1,4 +1,6 @@
-// TODO: error handling
+// TODO: 
+//  - error handling
+//  - so far: Context = mpi program (Init+Finalize) + communicator, problem: how do we handle multiple communicators?
 
 #include <empi.h>  
 #include <iostream>
