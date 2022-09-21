@@ -1,0 +1,3 @@
+add_executable(empi_send_receive empi_send_recv.cpp)
+
+target_link_libraries(empi_send_receive PUBLIC empi)
