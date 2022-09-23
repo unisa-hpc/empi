@@ -1,71 +1,87 @@
-#ifndef __CONTEXT_H__
-#define __CONTEXT_H__
+#ifndef EMPI_PROJECT_CONTEXT_HPP
+#define EMPI_PROJECT_CONTEXT_HPP
 
 #include <mpi.h>
 #include <span>
-
 #include <empi/message_grp_hdl.hpp>
+#include <empi/tag.hpp>
+#include <empi/type_traits.hpp>
+#include <functional>
 
 namespace empi{
 
-	class Context{
-		
-		public:
-			Context(int* argc, char*** argv){
-				MPI_Init(argc, argv);
-				MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
-				MPI_Comm_size(MPI_COMM_WORLD, &_size);
-				_succ = _rank + 1 % _size;
-				_prev = _rank == 0 ? 0 : _rank - 1 % _size; 
-			}
+    class Context{
 
-			Context(const Context& c) = delete;
-			Context(Context&& c) = default;
+    public:
+        Context(int* argc, char*** argv){
+            MPI_Init(argc, argv);
+            MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
+            MPI_Comm_size(MPI_COMM_WORLD, &_size);
+            _succ = _rank + 1 % _size;
+            _prev = _rank == 0 ? 0 : _rank - 1 % _size;
+        }
 
-			~Context(){
-				MPI_Finalize();
-				
-			}
+        Context(const Context& c) = delete;
+        Context(Context&& c) = default;
 
-			template<typename T, int TAG>
-			void send(std::span<T> data, int dest) const{
-				MessageGroupHandler<T,TAG> cgh{MPI_COMM_WORLD};
-				cgh.send(data,dest);
-			}
+        ~Context(){
+            MPI_Finalize();
+        }
 
-			template<typename T, int TAG>
-			void recv(std::span<T> data, int src) const{
-				MessageGroupHandler<T,TAG> cgh{MPI_COMM_WORLD};
-				cgh.recv(data, src);
-			}
+        template<typename T>
+        void run(T cgf){
+			typedef function_traits<decltype(cgf)> traits;
+			using Handler = std::remove_reference_t<typename traits::template arg<0>::type>;
+//			static_assert(is_instance<Handler,MessageGroupHandler>{},"err");
 
-			int rank() const{
-				return _rank;
-			}
+            Handler cgh{MPI_COMM_WORLD};
 
-			int size() const{
-				return _size;
-			}
+            cgf(cgh);
+        }
 
-			int prev() const{
-				return _prev;
-			}
+        template<typename T, Tag TAG>
+        void send(std::span<T> data, int dest) const{
+            MessageGroupHandler<T,TAG,0> cgh{MPI_COMM_WORLD};
+            cgh.send(data,dest);
+        }
 
-			int succ() const{
-				return _succ;
-			}
+        template<typename T, Tag TAG>
+        void recv(std::span<T> data, int src) const{
+            MessageGroupHandler<T,TAG,0> cgh{MPI_COMM_WORLD};
+            cgh.recv(data, src);
+        }
 
 
+        int rank() const{
+            return _rank;
+        }
+
+        int size() const{
+            return _size;
+        }
+
+        int prev() const{
+            return _prev;
+        }
+
+        int succ() const{
+            return _succ;
+        }
 
 
 
-		private:
-			int _rank;
-			int _size;
-			int _prev;
-			int _succ;
 
-	};
+
+    private:
+         int _rank;
+         int _size;
+         int _prev;
+         int _succ;
+
+    };
+
+
 
 };
-#endif // __CONTEXT_H__
+
+#endif // __EMPI_CONTEXT_H__

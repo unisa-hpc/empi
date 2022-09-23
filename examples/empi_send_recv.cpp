@@ -1,19 +1,23 @@
-#include <span>
 #include <iostream>
 
 #include <empi/empi.hpp>
+#include <numeric>
 
 int main(int argc, char **argv){
 
   empi::Context ctx(&argc, &argv);
-  int number;
+  int number[5];
   // without message group handler
   if (ctx.rank() == 0) {
-    number = 5;
-    ctx.send<int, 0>(std::span{&number, 1}, 1);
+    std::iota(number, number+5,1);
+    ctx.send<int, empi::Tag{0}>(std::span{number, 5}, 1);
   } else if (ctx.rank() == 1) {
-    ctx.recv<int, 0>(std::span{&number, 1}, 0);
-    std::cout << "Received value: " << number;
+    ctx.recv<int, empi::Tag{0}>(std::span{number, 5}, 0);
+
+    for (int i: number) {
+          std::cout << i << " ";
+    }
+    std::cout << "\n";
   }
     
   // // with fixed-tag and type message group handler

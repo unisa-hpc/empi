@@ -6,17 +6,19 @@ enable_testing()
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(empi INTERFACE)
-
 include(FindMPI)
-target_include_directories(empi INTERFACE MPI::MPI_CXX_INCLUDE_DIRS)
+
 
 set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/empi.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/context.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/type_traits.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_grp_hdl.hpp
-)
+
+		include/empi/tag.hpp include/empi/utils.hpp)
+
+add_library(empi INTERFACE ${header_files})
+target_include_directories(empi INTERFACE MPI::MPI_CXX_INCLUDE_DIRS)
 
 set_target_properties(empi
 	PROPERTIES
