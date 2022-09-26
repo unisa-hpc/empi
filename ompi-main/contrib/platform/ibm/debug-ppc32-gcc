@@ -1,0 +1,12 @@
+enable_mem_debug=yes
+enable_debug_symbols=yes
+enable_debug=yes
+enable_mem_profile=no
+enable_contrib_no_build=libnbc
+CXXFLAGS="-m32 -mcpu=powerpc64 -mtune=powerpc64 -O0 -g3 -ggdb"
+CCASFLAGS="-m32 -mcpu=powerpc64 -mtune=powerpc64 -O0 -g3 -ggdb"
+FCFLAGS="-m32 -mcpu=powerpc64 -mtune=powerpc64 -O0 -g3 -ggdb"
+CFLAGS="-m32 -mcpu=powerpc64 -mtune=powerpc64 -O0 -g3 -ggdb"
+with_wrapper_cflags="-m32 -mcpu=powerpc64 -mtune=powerpc64 -O0 -g3 -ggdb"
+with_wrapper_cxxflags="-m32 -mcpu=powerpc64 -mtune=powerpc64 -O0 -g3 -ggdb"
+with_wrapper_fcflags="-m32 -mcpu=powerpc64 -mtune=powerpc64 -O0 -g3 -ggdb"

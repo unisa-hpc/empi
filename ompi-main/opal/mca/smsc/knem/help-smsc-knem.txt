@@ -1,0 +1,66 @@
+# -*- text -*-
+#
+# Copyright (c) 2004-2009 The University of Tennessee and The University
+#                         of Tennessee Research Foundation.  All rights
+#                         reserved.
+# Copyright (c) 2006-2022 Cisco Systems, Inc.  All rights reserved.
+# Copyright (c) 2012-2014 Los Alamos National Security, LLC.
+#                         All rights reserved.
+# Copyright (c) 2014      Research Organization for Information Science
+#                         and Technology (RIST). All rights reserved.
+# $COPYRIGHT$
+#
+# Additional copyrights may follow
+#
+# $HEADER$
+#
+# This is the US/English help file for Open MPI's KNEM smsc support.
+#
+[knem permission denied]
+WARNING: Open MPI failed to open the /dev/knem device due to a
+permissions problem.  Please check with your system administrator to
+get the permissions fixed, or set the smsc MCA variable to "^knem" to
+silence this warning and run without knem support.
+
+  Local host:            %s
+  /dev/knem permissions: 0%o
+#
+[knem fail open]
+WARNING: Open MPI failed to open the /dev/knem device due to a local
+error. Please check with your system administrator to get the problem
+fixed, or set the smsc MCA variable to "^knem" to silence this warning
+and run without knem support.
+
+Open MPI will try to fall back on another single-copy mechanism if one
+is available.  This may result in lower performance.
+
+  Local host: %s
+  Errno:      %d (%s)
+#
+[knem get ABI fail]
+WARNING: Open MPI failed to retrieve the ABI version from the
+/dev/knem device due to a local error.  This usually indicates an
+error in your knem installation; please check with your system
+administrator, or set the smsc MCA variable to "^knem" to silence this
+warning and run without knem support.
+
+Open MPI will try to fall back on another single-copy mechanism if one
+is available.  This may result in lower performance.
+
+  Local host: %s
+  Errno:      %d (%s)
+#
+[knem ABI mismatch]
+WARNING: Open MPI was compiled with support for one version of the
+knem kernel module, but it discovered a different version running in
+/dev/knem. Open MPI needs to be installed with support for the same
+version of knem as is in the running Linux kernel. Please check with
+your system administrator, or set the smsc MCA variable to "^knem" to
+silence this warning and run without knem support.
+
+Open MPI will try to fall back on another single-copy mechanism if one
+is available.  This may result in lower performance.
+
+  Local host:              %s
+  Open MPI's knem version: 0x%x
+  /dev/knem's version:     0x%x
