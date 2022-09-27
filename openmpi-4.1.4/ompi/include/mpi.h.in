@@ -1319,10 +1319,6 @@ OMPI_DECLSPEC  int MPI_Alloc_mem(MPI_Aint size, MPI_Info info,
                                  void *baseptr);
 OMPI_DECLSPEC  int MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
                                  MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);
-                                 
-OMPI_DECLSPEC  int Unchecked_MPI_Allreduce(const void *sendbuf, void *recvbuf, int count,
-                                 MPI_Datatype datatype, MPI_Op op, MPI_Comm comm);                                 
-
 OMPI_DECLSPEC  int MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
                                  MPI_Datatype datatype, MPI_Op op, MPI_Comm comm, MPI_Request *request);
 OMPI_DECLSPEC  int MPI_Alltoall(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
@@ -1347,14 +1343,9 @@ OMPI_DECLSPEC  int MPI_Barrier(MPI_Comm comm);
 OMPI_DECLSPEC  int MPI_Ibarrier(MPI_Comm comm, MPI_Request *request);
 OMPI_DECLSPEC  int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
                              int root, MPI_Comm comm);
-OMPI_DECLSPEC  int Unchecked_MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
-                             int root, MPI_Comm comm);       
 OMPI_DECLSPEC  int MPI_Bsend(const void *buf, int count, MPI_Datatype datatype,
                              int dest, int tag, MPI_Comm comm);
 OMPI_DECLSPEC  int MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
-				                              int root, MPI_Comm comm,
-											  MPI_Request *request);
-OMPI_DECLSPEC  int Unchecked_MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype,
 				                              int root, MPI_Comm comm,
 											  MPI_Request *request);
 OMPI_DECLSPEC  int MPI_Bsend_init(const void *buf, int count, MPI_Datatype datatype,
@@ -1655,13 +1646,9 @@ OMPI_DECLSPEC  int MPI_Iprobe(int source, int tag, MPI_Comm comm, int *flag,
                               MPI_Status *status);
 OMPI_DECLSPEC  int MPI_Irecv(void *buf, int count, MPI_Datatype datatype, int source,
                              int tag, MPI_Comm comm, MPI_Request *request);
-OMPI_DECLSPEC  int Unchecked_MPI_Irecv(void *buf, int count, MPI_Datatype datatype, int source,
-                             int tag, MPI_Comm comm, MPI_Request *request);
 OMPI_DECLSPEC  int MPI_Irsend(const void *buf, int count, MPI_Datatype datatype, int dest,
                               int tag, MPI_Comm comm, MPI_Request *request);
 OMPI_DECLSPEC  int MPI_Isend(const void *buf, int count, MPI_Datatype datatype, int dest,
-                             int tag, MPI_Comm comm, MPI_Request *request);
-OMPI_DECLSPEC  int Unchecked_MPI_Isend(const void *buf, int count, MPI_Datatype datatype, int dest,
                              int tag, MPI_Comm comm, MPI_Request *request);
 OMPI_DECLSPEC  int MPI_Issend(const void *buf, int count, MPI_Datatype datatype, int dest,
                               int tag, MPI_Comm comm, MPI_Request *request);
@@ -1734,8 +1721,6 @@ OMPI_DECLSPEC  int MPI_Recv_init(void *buf, int count, MPI_Datatype datatype, in
                                  int tag, MPI_Comm comm, MPI_Request *request);
 OMPI_DECLSPEC  int MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source,
                             int tag, MPI_Comm comm, MPI_Status *status);
-OMPI_DECLSPEC  int Unchecked_MPI_Recv(void *buf, int count, MPI_Datatype datatype, int source,
-                            int tag, MPI_Comm comm, MPI_Status *status);
 OMPI_DECLSPEC  int MPI_Reduce(const void *sendbuf, void *recvbuf, int count,
                               MPI_Datatype datatype, MPI_Op op, int root, MPI_Comm comm);
 OMPI_DECLSPEC  int MPI_Ireduce(const void *sendbuf, void *recvbuf, int count,
@@ -1796,8 +1781,6 @@ OMPI_DECLSPEC  int MPI_Send_init(const void *buf, int count, MPI_Datatype dataty
                                  int dest, int tag, MPI_Comm comm,
                                  MPI_Request *request);
 OMPI_DECLSPEC  int MPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest,
-                            int tag, MPI_Comm comm);
-OMPI_DECLSPEC  int Unchecked_MPI_Send(const void *buf, int count, MPI_Datatype datatype, int dest,
                             int tag, MPI_Comm comm);
 OMPI_DECLSPEC  int MPI_Sendrecv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
                                 int dest, int sendtag, void *recvbuf, int recvcount,

@@ -41,7 +41,6 @@ static const char FUNC_NAME[] = "MPI_Bcast";
 int MPI_Bcast(void *buffer, int count, MPI_Datatype datatype,
               int root, MPI_Comm comm)
 {
-    printf("\n-------------------------Hello from Bcast\n");
     int err;
 
     SPC_RECORD(OMPI_SPC_BCAST, 1);
