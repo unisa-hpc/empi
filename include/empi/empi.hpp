@@ -4,5 +4,6 @@
 // first draft
 
 #include <empi/context.hpp>
+#include <empi/message_group.hpp>
 
 #endif // __EMPI_H__

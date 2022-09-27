@@ -81,6 +81,11 @@ concept has_parameter = requires(T f){
 	is_instance<std::remove_reference_t<typename function_traits<decltype(f)>::template arg<0>::type>,K>{};
 };
 
+// ----------- CONCEPTS ------------
+template<typename T>
+concept has_data = requires(T t){
+  {t.data()};
+};
 
 
 } // namespace empi

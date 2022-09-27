@@ -14,8 +14,9 @@ set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/context.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/type_traits.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_grp_hdl.hpp
-
-		include/empi/tag.hpp include/empi/utils.hpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/tag.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/utils.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp include/empi/empi_defines.hpp)
 
 add_library(empi INTERFACE ${header_files})
 target_include_directories(empi INTERFACE MPI::MPI_CXX_INCLUDE_DIRS)

@@ -3,10 +3,13 @@
 
 #include <mpi.h>
 #include <span>
+#include <memory>
+
 #include <empi/message_grp_hdl.hpp>
 #include <empi/tag.hpp>
 #include <empi/type_traits.hpp>
 #include <functional>
+#include "message_group.hpp"
 
 namespace empi{
 
@@ -68,17 +71,17 @@ namespace empi{
             return _succ;
         }
 
+		std::unique_ptr<MessageGroup> create_message_group(MPI_Comm comm) {
+		return std::make_unique<MessageGroup>(comm);
+	  }
 
-
-
-
-    private:
+	 private:
          int _rank;
          int _size;
          int _prev;
          int _succ;
 
-    };
+	};
 
 
 
