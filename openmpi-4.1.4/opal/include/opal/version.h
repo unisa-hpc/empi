@@ -37,6 +37,6 @@
 #undef OPAL_VERSION
 #endif
 #define OPAL_VERSION "4.1.4"
-#define OPAL_CONFIGURE_CLI " \'--prefix=/home/isislab/opt/openmpi\'"
+#define OPAL_CONFIGURE_CLI " \'--prefix=/home/isislab/opt/openmpi\' \'--no-create\' \'--no-recursion\'"
 
 #endif

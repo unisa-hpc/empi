@@ -51,6 +51,8 @@ PATH: /home/isislab/.openmpi/bin
 PATH: /home/isislab/.openmpi/bin
 PATH: /home/isislab/opt/openmpi/bin
 PATH: /home/isislab/opt/openmpi/bin
+PATH: /home/isislab/opt/openmpi/bin
+PATH: /home/isislab/opt/openmpi/bin
 
 
 ## ----------- ##
@@ -380,9 +382,12 @@ configure:9721: result: make
 configure:9735: checking whether clock skew breaks make
 configure:9760: result: no
 configure:9770: checking whether make supports include
-configure:9798: result: yes
+configure:9798: result: no
 configure:9807: checking whether make allows comments in actions
-configure:9834: result: yes
+configure:9834: result: no
+configure:9839: WARNING: Your make does not allow comments in target code.
+Using this make may cause problems when building programs.
+You should consider using gnumake instead.
 configure:9848: checking for virtual path format
 configure:9891: result: VPATH
 configure:9901: checking whether make sets CFLAGS
@@ -2125,9 +2130,9 @@ pac_cv_gnu_attr_pure=yes
 pac_cv_have_statfs=yes
 pac_cv_have_statfs_f_fstypename=no
 pac_cv_int_hold_pointer=no
-pac_cv_prog_make_allows_comments=yes
+pac_cv_prog_make_allows_comments=no
 pac_cv_prog_make_found_clock_skew=no
-pac_cv_prog_make_include=yes
+pac_cv_prog_make_include=no
 pac_cv_prog_make_set_cflags=yes
 pac_cv_prog_make_vpath=VPATH
 pac_cv_struct_flock_and_mpi_offset=yes

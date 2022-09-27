@@ -1353,8 +1353,8 @@ OPAL_ASSEMBLY_FORMAT =
 OPAL_AS_GLOBAL = 
 OPAL_AS_LABEL_SUFFIX = 
 OPAL_CC_ABSOLUTE = /usr/bin/gcc
-OPAL_CONFIGURE_CLI =  \'--prefix=/home/isislab/opt/openmpi\'
-OPAL_CONFIGURE_DATE = Tue Sep 27 15:06:15 UTC 2022
+OPAL_CONFIGURE_CLI =  \'--prefix=/home/isislab/opt/openmpi\' \'--no-create\' \'--no-recursion\'
+OPAL_CONFIGURE_DATE = Tue Sep 27 16:11:10 UTC 2022
 OPAL_CONFIGURE_HOST = furore
 OPAL_CONFIGURE_USER = isislab
 OPAL_CXX_ABSOLUTE = /usr/bin/g++
@@ -1766,7 +1766,7 @@ ucx_STATIC_LIBS =
 AM_CFLAGS = \
             -DOPAL_CONFIGURE_USER="\"isislab\"" \
             -DOPAL_CONFIGURE_HOST="\"furore\"" \
-            -DOPAL_CONFIGURE_DATE="\"Tue Sep 27 15:06:15 UTC 2022\"" \
+            -DOPAL_CONFIGURE_DATE="\"Tue Sep 27 16:11:10 UTC 2022\"" \
             -DOMPI_BUILD_USER="\"$$USER\"" \
             -DOMPI_BUILD_HOST="\"$${HOSTNAME:-`(hostname || uname -n) | sed 1q`}\"" \
             -DOMPI_BUILD_DATE="\"`$(top_srcdir)/config/getdate.sh`\"" \

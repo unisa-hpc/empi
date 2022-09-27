@@ -542,7 +542,7 @@
 #define PMIX_CONFIGURE_CLI " \'--disable-man-pages\' \'--disable-debug\' \'--with-pmix-symbol-rename=OPAL_MCA_PMIX3X_\' \'--enable-embedded-mode\' \'--disable-pmix-timing\' \'--without-tests-examples\' \'--disable-pmix-binaries\' \'--disable-pmix-backward-compatibility\' \'--disable-visibility\' \'--enable-embedded-libevent\' '--with-libevent-header=\"opal/mca/event/external/external.h\"' \'--enable-embedded-hwloc\' '--with-hwloc-header=\"opal/mca/hwloc/external/external.h\"' \'--prefix=/home/isislab/opt/openmpi\' \'CFLAGS=-O3 -DNDEBUG  \' \'CPPFLAGS=-I/home/isislab/empi/openmpi-4.1.4 -I/home/isislab/empi/openmpi-4.1.4 -I/home/isislab/empi/openmpi-4.1.4/opal/include -I/home/isislab/empi/openmpi-4.1.4/opal/include    \' \'--cache-file=/dev/null\' \'--srcdir=.\' \'--disable-option-checking\'"
 
 /* Date when PMIx was built */
-#define PMIX_CONFIGURE_DATE "2022-09-27T15:07:31"
+#define PMIX_CONFIGURE_DATE "2022-09-27T16:12:28"
 
 /* Hostname where PMIx was built */
 #define PMIX_CONFIGURE_HOST "furore"
