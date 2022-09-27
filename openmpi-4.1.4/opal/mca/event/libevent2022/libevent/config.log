@@ -51,6 +51,8 @@ PATH: /home/isislab/.openmpi/bin
 PATH: /home/isislab/.openmpi/bin
 PATH: /home/isislab/opt/openmpi/bin
 PATH: /home/isislab/opt/openmpi/bin
+PATH: /home/isislab/opt/openmpi/bin
+PATH: /home/isislab/opt/openmpi/bin
 
 
 ## ----------- ##
@@ -511,7 +513,7 @@ configure:9801: checking for zlib.h
 configure:9801: result: yes
 configure:9817: checking for library containing inflateEnd
 configure:9848: gcc -o conftest -g -O2 -Wall -fno-strict-aliasing      conftest.c  >&5
-/usr/bin/ld: /tmp/ccD6fs8J.o: in function `main':
+/usr/bin/ld: /tmp/ccWNp9YI.o: in function `main':
 /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:39: undefined reference to `inflateEnd'
 collect2: error: ld returned 1 exit status
 configure:9848: $? = 1
@@ -573,7 +575,7 @@ configure:9902: checking for openssl/bio.h
 configure:9902: result: yes
 configure:9918: checking for library containing SSL_new
 configure:9949: gcc -o conftest -g -O2 -Wall -fno-strict-aliasing      conftest.c  >&5
-/usr/bin/ld: /tmp/ccQqBSRS.o: in function `main':
+/usr/bin/ld: /tmp/cc5jpsmw.o: in function `main':
 /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:41: undefined reference to `SSL_new'
 collect2: error: ld returned 1 exit status
 configure:9949: $? = 1
@@ -1573,7 +1575,7 @@ configure:10592: $? = 0
 configure:10592: result: yes
 configure:10592: checking for strlcpy
 configure:10592: gcc -o conftest -g -O2 -Wall -fno-strict-aliasing      conftest.c  >&5
-/usr/bin/ld: /tmp/cco4qVHd.o: in function `main':
+/usr/bin/ld: /tmp/ccxSI5I1.o: in function `main':
 /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:107: undefined reference to `strlcpy'
 collect2: error: ld returned 1 exit status
 configure:10592: $? = 1
@@ -1735,7 +1737,7 @@ configure:10592: $? = 0
 configure:10592: result: yes
 configure:10592: checking for arc4random
 configure:10592: gcc -o conftest -g -O2 -Wall -fno-strict-aliasing      conftest.c  >&5
-/usr/bin/ld: /tmp/ccq7QVSD.o: in function `main':
+/usr/bin/ld: /tmp/ccBk98jd.o: in function `main':
 /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:118: undefined reference to `arc4random'
 collect2: error: ld returned 1 exit status
 configure:10592: $? = 1
@@ -1864,7 +1866,7 @@ configure: failed program was:
 configure:10592: result: no
 configure:10592: checking for arc4random_buf
 configure:10592: gcc -o conftest -g -O2 -Wall -fno-strict-aliasing      conftest.c  >&5
-/usr/bin/ld: /tmp/ccORJcgA.o: in function `main':
+/usr/bin/ld: /tmp/cctqWiTz.o: in function `main':
 /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:118: undefined reference to `arc4random_buf'
 collect2: error: ld returned 1 exit status
 configure:10592: $? = 1
@@ -1993,7 +1995,7 @@ configure: failed program was:
 configure:10592: result: no
 configure:10592: checking for issetugid
 configure:10592: gcc -o conftest -g -O2 -Wall -fno-strict-aliasing      conftest.c  >&5
-/usr/bin/ld: /tmp/cc2aWwtU.o: in function `main':
+/usr/bin/ld: /tmp/ccWMKdnV.o: in function `main':
 /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:118: undefined reference to `issetugid'
 collect2: error: ld returned 1 exit status
 configure:10592: $? = 1
@@ -2200,7 +2202,7 @@ configure:11288: checking for epoll syscall support
 configure:11297: result: no
 configure:11305: checking for port_create
 configure:11305: gcc -o conftest -g -O2 -Wall -fno-strict-aliasing      conftest.c  >&5
-/usr/bin/ld: /tmp/ccycI1yJ.o: in function `main':
+/usr/bin/ld: /tmp/cchxjXRF.o: in function `main':
 /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:136: undefined reference to `port_create'
 collect2: error: ld returned 1 exit status
 configure:11305: $? = 1
@@ -5648,7 +5650,7 @@ conftest.c:130:22: warning: null argument where non-null required (argument 3) [
 conftest.c:128:15: warning: 'th' is used uninitialized in this function [-Wuninitialized]
   128 | pthread_t th; pthread_join(th, 0);
       |               ^~~~~~~~~~~~~~~~~~~
-/usr/bin/ld: /tmp/ccb45Urm.o: in function `main':
+/usr/bin/ld: /tmp/ccRqPwJJ.o: in function `main':
 /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:128: undefined reference to `pthread_join'
 /usr/bin/ld: /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:129: undefined reference to `__pthread_register_cancel'
 /usr/bin/ld: /home/isislab/empi/openmpi-4.1.4/opal/mca/event/libevent2022/libevent/conftest.c:130: undefined reference to `pthread_create'
