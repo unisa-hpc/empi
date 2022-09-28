@@ -77,7 +77,6 @@ namespace empi {
 	void run(T cgf){
 	  typedef function_traits<decltype(cgf)> traits;
 	  using Handler = std::remove_reference_t<typename traits::template arg<0>::type>;
-//			static_assert(is_instance<Handler,MessageGroupHandler>{},"err");
 
 	  Handler cgh(comm, requests);
 	  cgf(cgh);
