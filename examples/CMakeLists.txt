@@ -4,4 +4,5 @@ macro(create_example TARGET_NAME SRC_FILE)
 endmacro()
 
 create_example(empi_send_recv empi_send_recv.cpp)
+create_example(empi_submit_async empi_submit_async.cpp)
 create_example(empi_submit empi_submit.cpp)

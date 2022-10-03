@@ -6,7 +6,7 @@ enable_testing()
 
 set(CMAKE_CXX_STANDARD 20)
 
-include(FindMPI)
+include(FindMPI REQUIRED)
 
 
 set(header_files
@@ -16,7 +16,7 @@ set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_grp_hdl.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/tag.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/utils.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp include/empi/empi_defines.hpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp include/empi/empi_defines.hpp include/empi/request.hpp include/empi/async_event.hpp)
 
 add_library(empi INTERFACE ${header_files})
 target_include_directories(empi INTERFACE MPI::MPI_CXX_INCLUDE_DIRS)

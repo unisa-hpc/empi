@@ -31,29 +31,6 @@ namespace empi{
             MPI_Finalize();
         }
 
-        template<typename T>
-        void run(T cgf){
-			typedef function_traits<decltype(cgf)> traits;
-			using Handler = std::remove_reference_t<typename traits::template arg<0>::type>;
-//			static_assert(is_instance<Handler,MessageGroupHandler>{},"err");
-
-            Handler cgh{MPI_COMM_WORLD};
-
-            cgf(cgh);
-        }
-
-        template<typename T, Tag TAG>
-        void send(std::span<T> data, int dest) const{
-            MessageGroupHandler<T,TAG,0> cgh{MPI_COMM_WORLD};
-            cgh.send(data,dest);
-        }
-
-        template<typename T, Tag TAG>
-        void recv(std::span<T> data, int src) const{
-            MessageGroupHandler<T,TAG,0> cgh{MPI_COMM_WORLD};
-            cgh.recv(data, src);
-        }
-
 
         int rank() const{
             return _rank;

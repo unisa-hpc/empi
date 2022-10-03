@@ -7,38 +7,44 @@
 
 namespace empi
 {
+namespace details {
 
 template<typename T>
-struct MpiType
-{};
+struct mpi_type
+{
+  static MPI_Datatype get_type() { return nullptr; }
+};
 
-#define MAKE_TYPE_CONVERSION(T, mpi_type) \
-	template<> \
-	struct MpiType<T> \
-	{ static constexpr int value = mpi_type; };
+#define MAKE_TYPE_CONVERSION(T, base_type) \
+    template<> \
+    struct mpi_type<T> \
+    { static MPI_Datatype get_type() { return base_type; } };
 
-MAKE_TYPE_CONVERSION(int,	MPI_INT)
-MAKE_TYPE_CONVERSION(char,	MPI_CHAR)
-MAKE_TYPE_CONVERSION(short,	MPI_SHORT)
-MAKE_TYPE_CONVERSION(long,	MPI_LONG)
-MAKE_TYPE_CONVERSION(float,	MPI_FLOAT)
-MAKE_TYPE_CONVERSION(double,MPI_DOUBLE)
+
+MAKE_TYPE_CONVERSION(int, MPI_INT)
+MAKE_TYPE_CONVERSION(char, MPI_CHAR)
+MAKE_TYPE_CONVERSION(short, MPI_SHORT)
+MAKE_TYPE_CONVERSION(long, MPI_LONG)
+MAKE_TYPE_CONVERSION(float, MPI_FLOAT)
+MAKE_TYPE_CONVERSION(double, MPI_DOUBLE)
 
 template<typename T, T v1, T v2>
-struct is_greater{
+struct is_greater {
   static constexpr bool value = v1 > v2;
 };
 
 template<typename T, T v1, T v2>
-struct is_same{
+struct is_same {
   static constexpr bool value = v1 == v2;
 };
+
 
 template<typename T, T v1, T v2>
 constexpr bool is_greater_v = is_greater<T,v1,v2>::value;
 template<typename T, T v1, T v2>
 constexpr bool is_same_v = is_same<T,v1,v2>::value;
 
+}
 
 // https://stackoverflow.com/a/7943765
 template <typename T>
@@ -87,6 +93,14 @@ concept has_data = requires(T t){
   {t.data()};
 };
 
+template<class T, class U=
+std::remove_cvref_t<
+	std::remove_pointer_t<
+		std::remove_extent_t<
+			T >>>>
+struct remove_all : remove_all<U> {};
+template<class T> struct remove_all<T, T> { typedef T type; };
+template<class T> using remove_all_t = typename remove_all<T>::type;
 
 } // namespace empi
 
