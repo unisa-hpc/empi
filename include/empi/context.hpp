@@ -20,8 +20,8 @@ namespace empi{
             MPI_Init(argc, argv);
             MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
             MPI_Comm_size(MPI_COMM_WORLD, &_size);
-            _succ = _rank + 1 % _size;
-            _prev = _rank == 0 ? 0 : _rank - 1 % _size;
+            _succ = (_rank + 1) % _size;
+            _prev = _rank == 0 ? (_size - 1) : (_rank - 1);
         }
 
         Context(const Context& c) = delete;

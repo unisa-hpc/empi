@@ -14,6 +14,10 @@ struct async_event{
 	request = std::make_shared<MPI_Request>();
   }
 
+  auto get_request() -> MPI_Request* {
+	return request.get();
+  };
+
   std::unique_ptr<MPI_Status> wait(){
 	auto status = std::make_unique<MPI_Status>();
 	MPI_Wait(request.get(),status.get());
