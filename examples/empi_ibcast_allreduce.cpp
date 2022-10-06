@@ -21,9 +21,10 @@ int main(int argc, char** argv) {
   message_group->run_and_wait([&](empi::MessageGroupHandler<double, empi::NOTAG, size> &mgh){
   	//mgh.Bcast(src,0);
   	auto event = mgh.Ibcast(src,0);
+	mgh.Allreduce(src,dest,MPI_SUM);
   }); // Waitall is implicit here
 
-	message_group->Allreduce<size>(src,dest, MPI_SUM);
+	message_group->Allreduce<size>(src, dest, MPI_SUM);
 
   for(auto& e : dest){
 	if(e != (10 * ctx.size())){

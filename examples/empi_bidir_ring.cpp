@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 
   std::vector<double> src(size);
   std::vector<double> dest(size);
-  std::fill(src.begin(),src.end(),ctx.rank());
+//  std::fill(src.begin(),src.end(),ctx.rank());
 
   std::cout << "RANK: " << ctx.rank() << " - prev: " << ctx.prev() << " - succ: " << ctx.succ() << "\n";
   // with fixed-tag and type message context
@@ -22,7 +22,6 @@ int main(int argc, char** argv) {
       mgh.Isend(src, ctx.succ(), tag1);
       mgh.Irecv(dest, ctx.prev(), tag1);
   }); // Waitall is implicit here
-
 
   for(auto& e : dest){
 	if(e != ctx.prev()){

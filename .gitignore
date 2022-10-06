@@ -1,6 +1,6 @@
-build/
+tmp/build/
 .vscode/
-cmake-build-debug/
+tmp/cmake-build-debug/
 .idea/
 *build*/
 .cache/

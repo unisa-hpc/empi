@@ -93,7 +93,7 @@ concept has_value_type = requires(T t){
 };
 
 template<typename T, typename K>
-concept is_valid_container = has_data<K> && std::is_same_v<T, typename K::value_type>;
+concept is_valid_container = has_data<K> && std::is_same_v<T, typename std::remove_reference_t<K>::value_type>;
 
 template<typename T, typename K>
 concept is_valid_pointer = std::is_same_v<T,remove_all_t<K>>;

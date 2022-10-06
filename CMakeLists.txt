@@ -3,11 +3,10 @@ project(empi-project VERSION 0.1.0)
 
 include(CTest)
 enable_testing()
-
 set(CMAKE_CXX_STANDARD 20)
-
 include(FindMPI REQUIRED)
 
+option(MPI_EXAMPLES "Enable MPI examples" OFF)
 
 set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/empi.hpp
@@ -16,7 +15,7 @@ set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_grp_hdl.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/tag.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/utils.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp include/empi/empi_defines.hpp include/empi/request.hpp include/empi/async_event.hpp include/empi/datatype.hpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp include/empi/empi_defines.hpp include/empi/request.hpp include/empi/async_event.hpp include/empi/datatype.hpp examples/mpi_test_send_recv.cpp)
 
 add_library(empi INTERFACE ${header_files})
 target_include_directories(empi INTERFACE MPI::MPI_CXX_INCLUDE_DIRS)

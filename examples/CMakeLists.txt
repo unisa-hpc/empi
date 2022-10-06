@@ -3,8 +3,13 @@ macro(create_example TARGET_NAME SRC_FILE)
     target_link_libraries(${TARGET_NAME} PUBLIC empi)
 endmacro()
 
+if(MPI_EXAMPLES)
+    create_example(mpi_test_send_recv mpi_test_send_recv.cpp)
+endif()
+
 create_example(empi_send_recv empi_send_recv.cpp)
 create_example(empi_submit_async empi_submit_async.cpp)
 create_example(empi_submit empi_submit.cpp)
 create_example(empi_bidir_ring empi_bidir_ring.cpp)
 create_example(empi_ibcast empi_ibcast_allreduce.cpp)
+create_example(empi_test_send_recv empi_test_send_recv.cpp)

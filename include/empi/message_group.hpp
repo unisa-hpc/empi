@@ -27,6 +27,10 @@ namespace empi {
 	  wait_all();
 	}
 
+	int barrier(){
+	  return MPI_Barrier(comm);
+	}
+
 	//---------------- SEND ------------------
 
 	template<Tag tag, size_t size, typename T, typename C = typename T::value_type>
@@ -258,7 +262,7 @@ namespace empi {
 	template<size_t size, typename T>
 	int Allreduce(T&& sendbuf, T&& recvbuf, MPI_Op op){
 		MessageGroupHandler<typename get_true_type<T>::type, NOTAG, size> h(comm, _request_pool);
-		return h.template Allreduce(sendbuf,recvbuf,op);
+		return h.template Allreduce<T>(std::forward<T>(sendbuf),std::forward<T>(recvbuf),op);
 	}
 
 	template<typename T>

@@ -15,6 +15,11 @@ namespace empi{
 		}
 
 		template<typename T>
+		static inline auto get_underlying_pointer(T* buf){
+		  return buf;
+		}
+
+		template<typename T>
 		static inline auto get_underlying_pointer(const T* buf){
 		  return buf;
 		}
