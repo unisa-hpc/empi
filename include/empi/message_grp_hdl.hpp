@@ -47,7 +47,7 @@ namespace empi{
 
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG != -1)
-		  int send(K&& data, int dest, size_t size){
+		  int inline send(K&& data, int dest, size_t size){
 			return MPI_USend(details::get_underlying_pointer(data), size,  details::mpi_type<T>::get_type(), dest, TAG.value, communicator);
 		  }
 
@@ -69,7 +69,7 @@ namespace empi{
 
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG.value >= -1)
-		  int recv(K&& data, int src, size_t size, MPI_Status& status){
+		  int inline recv(K&& data, int src, size_t size, MPI_Status& status){
 			return MPI_URecv(details::get_underlying_pointer(data), size,  details::mpi_type<T>::get_type(), src, TAG.value, communicator, &status);
 		  }
 

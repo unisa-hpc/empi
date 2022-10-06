@@ -5,6 +5,7 @@ endmacro()
 
 if(MPI_EXAMPLES)
     create_example(mpi_test_send_recv mpi_test_send_recv.cpp)
+    create_example(mpi_test_usend_urecv mpi_test_usend_urecv.cpp)
 endif()
 
 create_example(empi_send_recv empi_send_recv.cpp)
