@@ -52,33 +52,40 @@ int main(int argc, char **argv) {
   MPI_Status status;
   auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
 
+  const volatile auto prev = ctx.prev();
+  const volatile auto next = ctx.succ();
+
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
+          std::shared_ptr<async_event> events[4];
           // First iter
-          if (ctx.rank() == 0) {
-            mgh.send(arr, 1, n);
-            mgh.recv(arr, 1, n, status);
-          } else {
-            mgh.recv(arr, 0, n, status);
-            mgh.send(arr, 0, n);
-          }
-          
+          events[0] = mgh.Irecv(arr, prev, n);
+          events[1] = mgh.Irecv(arr, next, n);
+          events[2] = mgh.Isend(arr, prev, n);
+          events[3] = mgh.Isend(arr, next, n);
+          #pragma unroll
+          for(auto& req : events)
+            req->wait();
           MPI_Barrier(MPI_COMM_WORLD);
+          
 
           if (ctx.rank() == 0)
               t_start = MPI_Wtime();
 
           while (iter < max_iter) {
-            if (ctx.rank() == 0) {
-              mgh.send(arr, 1, n);
-              mgh.recv(arr, 1, n, status);
-            } else {
-              mgh.recv(arr, 0, n, status);
-              mgh.send(arr, 0, n);
+            // std::cout << iter << "\n";
+              events[0] = mgh.Irecv(arr, prev, n);
+              events[1] = mgh.Irecv(arr, next, n);
+              events[2] = mgh.Isend(arr, prev, n);
+              events[3] = mgh.Isend(arr, next, n);
+              
+              #pragma unroll
+              for(auto& req : events)
+                req->wait();
+                
+              iter++;
             }
-            iter++;
-          }
-
+            
           message_group->barrier();
           if (ctx.rank() == 0) {
             t_end = MPI_Wtime();

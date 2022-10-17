@@ -5,9 +5,11 @@
 #ifndef EMPI_PROJECT_INCLUDE_EMPI_MESSAGE_GROUP_HPP_
 #define EMPI_PROJECT_INCLUDE_EMPI_MESSAGE_GROUP_HPP_
 
+#include "empi/async_event.hpp"
 #include <mpi.h>
 #include <memory>
 
+#include <empi/request_pool.hpp>
 #include <empi/message_grp_hdl.hpp>
 #include <empi/tag.hpp>
 #include <empi/utils.hpp>
@@ -19,7 +21,7 @@ namespace empi {
    public:
 	explicit MessageGroup(MPI_Comm comm) : comm(comm) {
 	  MPI_Checkcomm(comm); //TODO: exception?
-	  _request_pool = std::make_shared<request_pool_t>();
+	  _request_pool = std::make_shared<request_pool>();
 	}
 
 	//Wait an all Message in this group, so that no request is pending
@@ -293,16 +295,16 @@ namespace empi {
 	}
 
 	void wait_all(){
-	  for(auto& event : *_request_pool){
-		MPI_Status status;
-		MPI_Wait(event->request.get(),&status);
-		//TODO: how we handle those errors?
-	  }
+	//   for(auto& event : *_request_pool){
+	// 	MPI_Status status;
+	// 	MPI_Wait(event->request.get(),&status);
+	// 	//TODO: how we handle those errors?
+	//   }
 	}
 
    private:
 	MPI_Comm comm;
-	request_pool _request_pool;
+	std::shared_ptr<request_pool> _request_pool;
 
   };
 }

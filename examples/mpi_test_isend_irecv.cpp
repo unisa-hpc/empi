@@ -64,18 +64,24 @@ int main(int argc, char **argv) {
       }
 
     MPI_Barrier(MPI_COMM_WORLD);
-
+    MPI_Request requets[2];
     if (myid == 0)
       t_start = MPI_Wtime();
 
     while (iter < max_iter) {
       if (myid == 0) {
-        MPI_Send(arr, n, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
-        MPI_Recv(arr, n, MPI_CHAR, 1, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        MPI_Isend(arr, n, MPI_CHAR, 1, 0, MPI_COMM_WORLD, &requets[0]);
+        MPI_Irecv(arr, n, MPI_CHAR, 1, MPI_ANY_TAG, MPI_COMM_WORLD,  &requets[1]);
       } else { // Node rank 1
-        MPI_Recv(myarr, n, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-        MPI_Send(myarr, n, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
+        MPI_Irecv(myarr, n, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &requets[1]);
+        MPI_Wait(&requets[1], &status);
+        MPI_Isend(myarr, n, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &requets[0]);
       }
+
+      #pragma unroll
+      for(int i = 0; i < 2; i++)
+        MPI_Wait(&requets[i], &status);
+
       iter++;
     }
 

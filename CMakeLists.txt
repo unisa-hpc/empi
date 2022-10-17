@@ -15,7 +15,13 @@ set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_grp_hdl.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/tag.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/utils.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp include/empi/empi_defines.hpp include/empi/request.hpp include/empi/async_event.hpp include/empi/datatype.hpp examples/mpi_test_send_recv.cpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp 
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/request_pool.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/empi_defines.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/request.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/async_event.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/datatype.hpp
+	)
 
 add_library(empi INTERFACE ${header_files})
 target_include_directories(empi INTERFACE MPI::MPI_CXX_INCLUDE_DIRS)

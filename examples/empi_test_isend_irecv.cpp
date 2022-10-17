@@ -64,18 +64,24 @@ int main(int argc, char **argv) {
           }
           
           MPI_Barrier(MPI_COMM_WORLD);
+          std::shared_ptr<async_event> send, recv;
 
           if (ctx.rank() == 0)
               t_start = MPI_Wtime();
 
           while (iter < max_iter) {
+            // std::cout << iter << "\n";
             if (ctx.rank() == 0) {
-              mgh.send(arr, 1, n);
-              mgh.recv(arr, 1, n, status);
+              send = mgh.Isend(arr,1,n);
+              recv = mgh.Irecv(arr, 1, n);
             } else {
-              mgh.recv(arr, 0, n, status);
-              mgh.send(arr, 0, n);
+              recv = mgh.Irecv(arr, 0, n);
+              recv->wait();
+              send = mgh.Isend(arr, 0, n);
             }
+            // message_group->wait_all();
+            send->wait();
+            recv->wait();
             iter++;
           }
 

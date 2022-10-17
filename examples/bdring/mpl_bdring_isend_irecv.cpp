@@ -1,5 +1,3 @@
-#include "empi/context.hpp"
-#include "empi/message_grp_hdl.hpp"
 #include <chrono>
 #include <cmath>
 #include <iostream>
@@ -9,7 +7,10 @@
 #include <ctime>
 #include <unistd.h>
 
-#include <empi/empi.hpp>
+#include <mpl/mpl.hpp>
+#include <vector>
+
+
 /**
 A simple ping pong test that iterates many times to measure communication time
 between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
@@ -28,9 +29,7 @@ int main(int argc, char **argv) {
                                                          pow_2;
   double t_start, t_end, t_start_inner;
   constexpr int SCALE = 1000000;
-  char *arr, *myarr;
 
-  empi::Context ctx(&argc, &argv);
 
   // ------ PARAMETER SETUP -----------
   pow_2 = atoi(argv[1]);
@@ -41,55 +40,65 @@ int main(int argc, char **argv) {
   nBytes = std::pow(2, pow_2);
   n = nBytes;
 
-  myarr = new char[n];
-  arr = new char[n];
+  std::vector<char> myarr(32);
+  std::vector<char> arr(32);
 
-  if (ctx.rank() == 0) {
+
+  const mpl::communicator &comm_world(mpl::environment::comm_world());
+  mpl::contiguous_layout<char> l(32);
+  if (comm_world.rank() == 0) {
     for (int j = 0; j < n; j++)
       arr[j] = 0;
   }
 
   MPI_Status status;
-  auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
 
-  message_group->run(
-      [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
-          // First iter
-          if (ctx.rank() == 0) {
-            mgh.send(arr, 1, n);
-            mgh.recv(arr, 1, n, status);
-          } else {
-            mgh.recv(arr, 0, n, status);
-            mgh.send(arr, 0, n);
-          }
-          
-          MPI_Barrier(MPI_COMM_WORLD);
+   int _succ, _prev;
+    _succ = (comm_world.rank() + 1) % comm_world.size();
+    _prev = comm_world.rank() == 0 ? (comm_world.size() - 1) : (comm_world.rank() - 1);
 
-          if (ctx.rank() == 0)
-              t_start = MPI_Wtime();
+    mpl::irequest_pool events;
 
-          while (iter < max_iter) {
-            if (ctx.rank() == 0) {
-              mgh.send(arr, 1, n);
-              mgh.recv(arr, 1, n, status);
-            } else {
-              mgh.recv(arr, 0, n, status);
-              mgh.send(arr, 0, n);
-            }
-            iter++;
-          }
+    // First iter
+    auto r1{comm_world.isend(arr.data(),l, _prev)};
+    auto r2{comm_world.isend(arr.data(),l, _succ)};
+    auto r3{comm_world.irecv(arr.data(),l, _prev)};
+    auto r4{comm_world.irecv(arr.data(),l, _succ)};
 
-          message_group->barrier();
-          if (ctx.rank() == 0) {
-            t_end = MPI_Wtime();
-            mpi_time =
-                (t_end - t_start) * SCALE;
-          }
-      });
+    r1.wait();
+    r2.wait();
+    r3.wait();
+    r4.wait();
+    comm_world.barrier();
+    
+    if (comm_world.rank() == 0)
+        t_start = mpl::environment::wtime();
 
-  message_group->barrier();
+    while (iter < max_iter) {
+      // std::cout << iter << "\n";
+        r1 = comm_world.isend(arr.data(), l, _prev);
+        r2 = comm_world.isend(arr.data(), l, _succ);
+        r3 = comm_world.irecv(arr.data(), l, _prev);
+        r4 = comm_world.irecv(arr.data(), l, _succ);
 
-  if (ctx.rank() == 0) {
+        r1.wait();
+        r2.wait();
+        r3.wait();
+        r4.wait();
+        // events.cancelall();
+        iter++;
+      }
+      
+    comm_world.barrier();
+    if (comm_world.rank() == 0) {
+      t_end = mpl::environment::wtime();
+      mpi_time =
+          (t_end - t_start) * SCALE;
+    }
+
+  comm_world.barrier();
+
+  if (comm_world.rank() == 0) {
     // cout << "\nData Size: " << nBytes << " bytes\n";
     cout << mpi_time << "\n";
     // cout << "Mean of communication times: " << Mean(mpi_time, num_restart)
@@ -98,8 +107,6 @@ int main(int argc, char **argv) {
     //      << "\n";
     // 	Print_times(mpi_time, num_restart);
   }
-  free(arr);
-  free(myarr);
   return 0;
 } // end main
 

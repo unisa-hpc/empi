@@ -13,8 +13,8 @@
 
 namespace empi{
 	constexpr int NOSIZE = 0;
-	using request_pool_t = std::vector<std::shared_ptr<async_event>>;
-	using request_pool = std::shared_ptr<request_pool_t>;
+	// using request_pool_t = std::vector<std::shared_ptr<async_event>>;
+	// using request_pool = std::shared_ptr<request_pool_t>;
 }
 
 #endif //EMPI_PROJECT_INCLUDE_EMPI_EMPI_DEFINES_HPP_

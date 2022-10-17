@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <span>
 #include <empi/empi.hpp>
 #include <numeric>
 

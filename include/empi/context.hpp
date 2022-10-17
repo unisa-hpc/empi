@@ -2,7 +2,6 @@
 #define EMPI_PROJECT_CONTEXT_HPP
 
 #include <mpi.h>
-#include <span>
 #include <memory>
 
 #include <empi/message_grp_hdl.hpp>

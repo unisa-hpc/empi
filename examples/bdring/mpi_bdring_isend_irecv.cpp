@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <chrono>
+#include <cstdio>
 #include <iostream>
 #include <malloc.h>
 #include <mpi.h>
@@ -54,28 +55,38 @@ int main(int argc, char **argv) {
       arr[j] = 0;
   }
 
+    int _rank, _size, _succ, _prev;
+    MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &_size);
+    _succ = (_rank + 1) % _size;
+    _prev = _rank == 0 ? (_size - 1) : (_rank - 1);
+
+    MPI_Request requets[4];
     // Warmup
-    if (myid == 0) {
-        MPI_Send(arr, n, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
-        MPI_Recv(arr, n, MPI_CHAR, 1, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-      } else { // Node rank 1
-        MPI_Recv(myarr, n, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-        MPI_Send(myarr, n, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
-      }
+    MPI_Irecv(arr, n, MPI_CHAR, _prev, MPI_ANY_TAG, MPI_COMM_WORLD,  &requets[0]);
+    MPI_Irecv(arr, n, MPI_CHAR, _succ, MPI_ANY_TAG, MPI_COMM_WORLD, &requets[1]);
+    MPI_Isend(arr, n, MPI_CHAR, _prev, 0, MPI_COMM_WORLD, &requets[2]);
+    MPI_Isend(arr, n, MPI_CHAR, _succ, 1, MPI_COMM_WORLD, &requets[3]);
 
+    #pragma unroll
+    for(auto& requet : requets){
+        MPI_Wait(&requet, &status);
+    }
     MPI_Barrier(MPI_COMM_WORLD);
-
+    
     if (myid == 0)
       t_start = MPI_Wtime();
 
     while (iter < max_iter) {
-      if (myid == 0) {
-        MPI_Send(arr, n, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
-        MPI_Recv(arr, n, MPI_CHAR, 1, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-      } else { // Node rank 1
-        MPI_Recv(myarr, n, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-        MPI_Send(myarr, n, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
-      }
+        MPI_Irecv(arr, n, MPI_CHAR, _prev, MPI_ANY_TAG, MPI_COMM_WORLD,  &requets[0]);
+        MPI_Irecv(arr, n, MPI_CHAR, _succ, MPI_ANY_TAG, MPI_COMM_WORLD, &requets[1]);
+        MPI_Isend(arr, n, MPI_CHAR, _prev, 0, MPI_COMM_WORLD, &requets[2]);
+        MPI_Isend(arr, n, MPI_CHAR, _succ, 1, MPI_COMM_WORLD, &requets[3]);
+
+        #pragma unroll
+        for(auto& requet : requets)
+          MPI_Wait(&requet, &status);
+
       iter++;
     }
 
