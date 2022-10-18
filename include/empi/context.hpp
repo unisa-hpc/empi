@@ -1,6 +1,7 @@
 #ifndef EMPI_PROJECT_CONTEXT_HPP
 #define EMPI_PROJECT_CONTEXT_HPP
 
+#include <cstddef>
 #include <mpi.h>
 #include <memory>
 
@@ -47,7 +48,7 @@ namespace empi{
             return _succ;
         }
 
-		std::unique_ptr<MessageGroup> create_message_group(MPI_Comm comm) {
+		std::unique_ptr<MessageGroup> create_message_group(MPI_Comm comm, size_t pool_size = request_pool::default_pool_size) {
 		return std::make_unique<MessageGroup>(comm);
 	  }
 

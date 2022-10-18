@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
                                                          pow_2;
   double t_start, t_end;
   constexpr int SCALE = 1000000;
-  char *arr, *myarr;
+  char *arr;
 
   MPI_Status status;
   err = MPI_Init(&argc, &argv);
@@ -37,16 +37,13 @@ int main(int argc, char **argv) {
 
   MPI_Comm_size(MPI_COMM_WORLD, &procs);
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-
+  MPI_Request request;
+  
   pow_2 = atoi(argv[1]);
   max_iter = atoi(argv[2]);
-  // pongnode = argv[4];
 
   double mpi_time;
-  nBytes = pow(2, pow_2);
-  n = nBytes;
-
-  myarr = new char[n];
+  n = pow(2, pow_2);
   arr = new char[n];
 
   if (myid == 0) {
@@ -55,34 +52,20 @@ int main(int argc, char **argv) {
   }
 
     // Warmup
-    if (myid == 0) {
-        MPI_Send(arr, n, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
-        MPI_Recv(arr, n, MPI_CHAR, 1, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-      } else { // Node rank 1
-        MPI_Recv(myarr, n, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-        MPI_Send(myarr, n, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
-      }
-
     MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Request requets[2];
+    MPI_IUbcast(arr, n, MPI_CHAR, 0, MPI_COMM_WORLD, &request);
+    MPI_Wait(&request,&status);
+    
+    MPI_Barrier(MPI_COMM_WORLD);
+    //main measurement
     if (myid == 0)
       t_start = MPI_Wtime();
 
     while (iter < max_iter) {
-      if (myid == 0) {
-        MPI_Isend(arr, n, MPI_CHAR, 1, 0, MPI_COMM_WORLD, &requets[0]);
-        MPI_Irecv(arr, n, MPI_CHAR, 1, MPI_ANY_TAG, MPI_COMM_WORLD,  &requets[1]);
-      } else { // Node rank 1
-        MPI_Irecv(myarr, n, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &requets[1]);
-        MPI_Wait(&requets[1], &status);
-        MPI_Isend(myarr, n, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &requets[0]);
-      }
-
-      #pragma unroll
-      for(int i = 0; i < 2; i++)
-        MPI_Wait(&requets[i], &status);
-
-      iter++;
+    MPI_IUbcast(arr, n, MPI_CHAR, 0, MPI_COMM_WORLD, &request);
+    MPI_Wait(&request,&status);
+    //MPI_Barrier(MPI_COMM_WORLD);
+    iter++;
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
@@ -91,7 +74,6 @@ int main(int argc, char **argv) {
       mpi_time = (t_end - t_start) * SCALE;
     }
   
-
   MPI_Barrier(MPI_COMM_WORLD);
   if (myid == 0) {
     // cout << "\nData Size: " << nBytes << " bytes\n";
@@ -103,7 +85,6 @@ int main(int argc, char **argv) {
     // Print_times(mpi_time, num_restart);
   }
   free(arr);
-  free(myarr);
   MPI_Finalize();
   return 0;
 } // end main

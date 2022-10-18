@@ -1,0 +1,5 @@
+create_example(empi_send_recv       	empi_send_recv.cpp)
+create_example(empi_submit_async    	empi_submit_async.cpp)
+create_example(empi_submit          	empi_submit.cpp)
+create_example(empi_bidir_ring      	empi_bidir_ring.cpp)
+create_example(empi_ibcast_allreduce 	empi_ibcast_allreduce.cpp)

@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 #include <chrono>
-#include <cstdio>
 #include <iostream>
 #include <malloc.h>
 #include <mpi.h>
@@ -25,7 +24,7 @@ int main(int argc, char **argv) {
                                                          pow_2;
   double t_start, t_end;
   constexpr int SCALE = 1000000;
-  char *arr, *myarr;
+  char *arr;
 
   MPI_Status status;
   err = MPI_Init(&argc, &argv);
@@ -41,13 +40,9 @@ int main(int argc, char **argv) {
 
   pow_2 = atoi(argv[1]);
   max_iter = atoi(argv[2]);
-  // pongnode = argv[4];
 
   double mpi_time;
-  nBytes = pow(2, pow_2);
-  n = nBytes;
-
-  myarr = new char[n];
+  n = pow(2, pow_2);
   arr = new char[n];
 
   if (myid == 0) {
@@ -55,39 +50,19 @@ int main(int argc, char **argv) {
       arr[j] = 0;
   }
 
-    int _rank, _size, _succ, _prev;
-    MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &_size);
-    _succ = (_rank + 1) % _size;
-    _prev = _rank == 0 ? (_size - 1) : (_rank - 1);
-
-    MPI_Request requets[4];
     // Warmup
-    MPI_Irecv(arr, n, MPI_CHAR, _prev, MPI_ANY_TAG, MPI_COMM_WORLD,  &requets[0]);
-    MPI_Irecv(arr, n, MPI_CHAR, _succ, MPI_ANY_TAG, MPI_COMM_WORLD, &requets[1]);
-    MPI_Isend(arr, n, MPI_CHAR, _prev, 0, MPI_COMM_WORLD, &requets[2]);
-    MPI_Isend(arr, n, MPI_CHAR, _succ, 1, MPI_COMM_WORLD, &requets[3]);
-
-    #pragma unroll
-    for(auto& requet : requets){
-        MPI_Wait(&requet, &status);
-    }
     MPI_Barrier(MPI_COMM_WORLD);
-    
+    MPI_UBcast(arr, n, MPI_CHAR, 0, MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    //main measurement
     if (myid == 0)
       t_start = MPI_Wtime();
 
     while (iter < max_iter) {
-        MPI_Irecv(arr, n, MPI_CHAR, _prev, MPI_ANY_TAG, MPI_COMM_WORLD,  &requets[0]);
-        MPI_Irecv(arr, n, MPI_CHAR, _succ, MPI_ANY_TAG, MPI_COMM_WORLD, &requets[1]);
-        MPI_Isend(arr, n, MPI_CHAR, _prev, 0, MPI_COMM_WORLD, &requets[2]);
-        MPI_Isend(arr, n, MPI_CHAR, _succ, 1, MPI_COMM_WORLD, &requets[3]);
-
-        #pragma unroll
-        for(auto& requet : requets)
-          MPI_Wait(&requet, &status);
-
-      iter++;
+    MPI_UBcast(arr, n, MPI_CHAR, 0, MPI_COMM_WORLD);
+    //MPI_Barrier(MPI_COMM_WORLD);
+    iter++;
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
@@ -96,7 +71,6 @@ int main(int argc, char **argv) {
       mpi_time = (t_end - t_start) * SCALE;
     }
   
-
   MPI_Barrier(MPI_COMM_WORLD);
   if (myid == 0) {
     // cout << "\nData Size: " << nBytes << " bytes\n";
@@ -108,7 +82,6 @@ int main(int argc, char **argv) {
     // Print_times(mpi_time, num_restart);
   }
   free(arr);
-  free(myarr);
   MPI_Finalize();
   return 0;
 } // end main

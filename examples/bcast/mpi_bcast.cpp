@@ -60,9 +60,9 @@ int main(int argc, char **argv) {
       t_start = MPI_Wtime();
 
     while (iter < max_iter) {
-    MPI_Bcast(arr, n, MPI_CHAR, 0, MPI_COMM_WORLD);
-    //MPI_Barrier(MPI_COMM_WORLD);
-    iter++;
+      MPI_Bcast(arr, n, MPI_CHAR, 0, MPI_COMM_WORLD);
+      //MPI_Barrier(MPI_COMM_WORLD);
+      iter++;
     }
 
     MPI_Barrier(MPI_COMM_WORLD);

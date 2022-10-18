@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include <chrono>
 #include <iostream>
+#include <iterator>
 #include <malloc.h>
 #include <mpi.h>
 #include <stdio.h>
@@ -43,42 +44,44 @@ int main(int argc, char **argv) {
 
   double mpi_time;
   n = pow(2, pow_2);
-  arr = new int[n];
-  recarr = new int[n];
+
+  const int num_elements = n / sizeof(int);
+  arr = new int[num_elements];
+  recarr = new int[num_elements];
 
   if (myid == 0) {
-    for (int j = 0; j < n; j++)
+    for (int j = 0; j < num_elements; j++)
       arr[j] = 0;
   }
 
-    // Warmup
-    MPI_Barrier(MPI_COMM_WORLD);
-    MPI_Allreduce(arr, recarr, n, MPI_INT, MPI_SUM, MPI_COMM_WORLD );
-    MPI_Barrier(MPI_COMM_WORLD);
+  // Warmup
+  MPI_Barrier(MPI_COMM_WORLD);
+  MPI_UAllreduce(arr, recarr, num_elements, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Barrier(MPI_COMM_WORLD);
 
-    //main measurement
-    if (myid == 0)
-      t_start = MPI_Wtime();
+  // main measurement
+  if (myid == 0)
+    t_start = MPI_Wtime();
 
-    while (iter < max_iter) {
-    MPI_Allreduce(arr, recarr, n, MPI_INT, MPI_SUM, MPI_COMM_WORLD );
-    //MPI_Barrier(MPI_COMM_WORLD);
+  while (iter < max_iter) {
+    MPI_UAllreduce(arr, recarr, num_elements, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
     iter++;
-    }
+  }
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    if (myid == 0) {
-      t_end = MPI_Wtime();
-      mpi_time = (t_end - t_start) * SCALE;
-    }
-  
+  MPI_Barrier(MPI_COMM_WORLD);
+  if (myid == 0) {
+    t_end = MPI_Wtime();
+    mpi_time = (t_end - t_start) * SCALE;
+  }
+
   MPI_Barrier(MPI_COMM_WORLD);
   if (myid == 0) {
     // cout << "\nData Size: " << nBytes << " bytes\n";
     cout << mpi_time << "\n";
     // cout << "Mean of communication times: " << Mean(mpi_time , num_restart)
     //      << "\n";
-    // cout << "Median of communication times: " << Median(mpi_time , num_restart )
+    // cout << "Median of communication times: " << Median(mpi_time ,
+    // num_restart )
     //      << "\n";
     // Print_times(mpi_time, num_restart);
   }

@@ -11,7 +11,13 @@
 struct async_event {
 
   constexpr async_event() : res(-1) {
-    request = std::make_shared<MPI_Request>();
+    request = std::make_shared<MPI_Request>(MPI_REQUEST_NULL);
+  }
+
+  async_event& operator=(async_event&& e) noexcept{
+    res =  e.res;
+    request = std::move(e.request);
+    return *this;
   }
 
   auto get_request() -> MPI_Request * { return request.get(); };

@@ -19,13 +19,13 @@ namespace empi{
 
 		public:
 		  explicit MessageGroupHandler(MPI_Comm comm, std::shared_ptr<request_pool> _request_pool) : communicator(comm), _request_pool(_request_pool) {
-			MPI_Datatype type = details::mpi_type<T>::get_type();
-			int flag;
-			MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &max_tag, &flag);
-			if(!flag){
-			  max_tag = -1;
-			}
-			MPI_Checktype(type); //TODO: exceptions?
+			// MPI_Datatype type = details::mpi_type<T>::get_type();
+			// int flag;
+			// MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &max_tag, &flag);
+			// if(!flag){
+			//   max_tag = -1;
+			// }
+			// MPI_Checktype(type); //TODO: exceptions?
 		  }
 
 		  MessageGroupHandler(const MessageGroupHandler& chg) = default;
@@ -93,9 +93,8 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG != -1)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest){
-			auto event = std::make_shared<async_event>();
+			auto event = _request_pool->get_req();
 			event->res = MPI_IUsend(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),dest,TAG.value,communicator,event->request.get());
-			// _request_pool->push_back(event);
 			return event;
 		  }
 
@@ -103,27 +102,25 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG != -1)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest, int size){
-			auto& event = _request_pool->get_req();
-			event->res = MPI_IUsend(details::get_underlying_pointer(data), size, details::mpi_type<T>::get_type(),dest,TAG.value,communicator,event->get_request());
-			// _request_pool->push_back(event);
+			auto event = _request_pool->get_req();
+			//TODO:Remove
+			event->res = MPI_Isend(details::get_underlying_pointer(data), size, details::mpi_type<T>::get_type(),dest,TAG.value,communicator,event->get_request());
 			return event;
 		  }
 
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG == NOTAG)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest, Tag tag){
-			auto event = std::make_shared<async_event>();
+			auto event = _request_pool->get_req();
 			event->res = MPI_IUsend(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),dest,tag.value,communicator,event->request.get());
-			// _request_pool->push_back(event);
 			return event;
 		  }
 
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG == NOTAG)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest, int size, Tag tag){
-			auto event = std::make_shared<async_event>();
+			auto event = _request_pool->get_req();
 			event->res = MPI_IUsend(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),dest,tag.value,communicator,event->request.get());
-			// _request_pool->push_back(event);
 			return event;
 		  }
 
@@ -135,36 +132,38 @@ namespace empi{
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG >= -2)
 		std::shared_ptr<async_event> Irecv(K&& data, int src){
-		  auto event = std::make_shared<async_event>();
+		  auto event = _request_pool->get_req();
 		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),SIZE, details::mpi_type<T>::get_type(),src,TAG.value,communicator,event->request.get());
-		//   _request_pool->push_back(event);
+
 		  return event;
 		}
 
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG >= -2)
 		std::shared_ptr<async_event> Irecv(K&& data, int src, int size){
-		  auto& event = _request_pool->get_req();
-		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),src,TAG.value,communicator,event->request.get());
-		//   _request_pool->push_back(event);
+		  auto event = _request_pool->get_req();
+		//   auto event = _request_pool->get_req();
+		  //TODO: 
+		  event->res = MPI_Irecv(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),src,TAG.value,communicator,event->request.get());
+
 		  return event;
 		}
 
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG == NOTAG)
 		std::shared_ptr<async_event> Irecv(K&& data, int src, Tag tag){
-		  auto event = std::make_shared<async_event>();
+		  auto event = _request_pool->get_req();
 		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),SIZE, details::mpi_type<T>::get_type(),src,tag.value,communicator,event->request.get());
-		//   _request_pool->push_back(event);
+
 		  return event;
 		}
 
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG == NOTAG)
 		std::shared_ptr<async_event> Irecv(K&& data, int src, int size, Tag tag){
-		  auto event = std::make_shared<async_event>();
+		  auto event = _request_pool->get_req();
 		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),src,tag.value,communicator,event->request.get());
-		//   _request_pool->push_back(event);
+
 		  return event;
 		}
 
@@ -189,18 +188,16 @@ namespace empi{
 	  template<typename K>
 	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0)
 	  std::shared_ptr<async_event> Ibcast(K&& data, int root){
-		auto event = std::make_shared<async_event>();
+		auto event = _request_pool->get_req();
 		  event->res = MPI_IUbcast(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),root,communicator, event->get_request());
-		// _request_pool->push_back(event);
 		return event;
 	  }
 
 	  template<typename K>
 	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE)
 	  std::shared_ptr<async_event> Ibcast(K&& data, int root, int size){
-		auto event = std::make_shared<async_event>();
+		auto event = _request_pool->get_req();
 		event->res = MPI_IUbcast(details::get_underlying_pointer(data), size, details::mpi_type<T>::get_type(),root,communicator, event->get_request());
-		// _request_pool->push_back(event);
 		return event;
 	  }
 

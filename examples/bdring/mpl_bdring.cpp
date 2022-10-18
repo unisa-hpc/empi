@@ -19,39 +19,35 @@ sleep_time(sleep time between iterations)
 **/
 using namespace std;
 
+using value_type = char;
+
 double Mean(double[], int);
 double Median(double[], int);
 void Print_times(double[], int);
 
 
 int main(int argc, char **argv) {
-  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
-                                                         pow_2;
-  double t_start, t_end, t_start_inner;
+ double t_start, t_end;
+  double mpi_time = 0.0;
   constexpr int SCALE = 1000000;
 
-
-  // ------ PARAMETER SETUP -----------
-  pow_2 = atoi(argv[1]);
-  max_iter = atoi(argv[2]);
-  // int num_restart = strtol(argv[3], NULL, 10);
-
-  double mpi_time = 0.0;
-  nBytes = std::pow(2, pow_2);
-  n = nBytes;
-
-  std::vector<char> myarr(32);
-  std::vector<char> arr(32);
-
-
-  const mpl::communicator &comm_world(mpl::environment::comm_world());
-  mpl::contiguous_layout<char> l(32);
-  if (comm_world.rank() == 0) {
-    for (int j = 0; j < n; j++)
-      arr[j] = 0;
-  }
+  int err;
+  long pow_2_bytes;
+  int n;
+  int myid;
+  long max_iter;
 
   MPI_Status status;
+
+  pow_2_bytes = strtol(argv[1], nullptr, 10);
+  n = static_cast<int>(std::pow(2, pow_2_bytes));
+  max_iter = strtol(argv[2], nullptr, 10);
+
+  std::vector<value_type> myarr(n);
+  std::vector<value_type> arr(n);
+
+  const mpl::communicator &comm_world(mpl::environment::comm_world());
+  mpl::contiguous_layout<value_type> l(n);
 
    int _succ, _prev;
     _succ = (comm_world.rank() + 1) % comm_world.size();
@@ -74,7 +70,7 @@ int main(int argc, char **argv) {
     if (comm_world.rank() == 0)
         t_start = mpl::environment::wtime();
 
-    while (iter < max_iter) {
+    for (auto iter = 0; iter < max_iter; iter++) {
       // std::cout << iter << "\n";
         r1 = comm_world.isend(arr.data(), l, _prev);
         r2 = comm_world.isend(arr.data(), l, _succ);
@@ -85,8 +81,6 @@ int main(int argc, char **argv) {
         r2.wait();
         r3.wait();
         r4.wait();
-        // events.cancelall();
-        iter++;
       }
       
     comm_world.barrier();

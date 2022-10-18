@@ -18,73 +18,67 @@ sleep_time(sleep time between iterations)
 **/
 using namespace std;
 
+using value_type = char;
+
 double Mean(double[], int);
 double Median(double[], int);
 void Print_times(double[], int);
 
 
 int main(int argc, char **argv) {
-  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
-                                                         pow_2;
-  double t_start, t_end, t_start_inner;
-  constexpr int SCALE = 1000000;
-  char *arr, *myarr;
-
-  empi::Context ctx(&argc, &argv);
-
-  // ------ PARAMETER SETUP -----------
-  pow_2 = atoi(argv[1]);
-  max_iter = atoi(argv[2]);
-  // int num_restart = strtol(argv[3], NULL, 10);
-
+   double t_start, t_end;
   double mpi_time = 0.0;
-  nBytes = std::pow(2, pow_2);
-  n = nBytes;
+  constexpr int SCALE = 1000000;
 
-  myarr = new char[n];
-  arr = new char[n];
+  int err;
+  long pow_2_bytes;
+  int n;
+  int myid;
+  long max_iter;
 
-  if (ctx.rank() == 0) {
-    for (int j = 0; j < n; j++)
-      arr[j] = 0;
-  }
+  pow_2_bytes = strtol(argv[1], nullptr, 10);
+  n = static_cast<int>(std::pow(2, pow_2_bytes));
+  max_iter = strtol(argv[2], nullptr, 10);
+
+  std::vector<value_type> arr(n,0);
 
   MPI_Status status;
+  auto ctx = empi::Context(&argc, &argv);
   auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
+
+  const volatile auto prev = ctx.prev();
+  const volatile auto next = ctx.succ();
 
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
+          std::shared_ptr<async_event> events[4];
           // First iter
-          if (ctx.rank() == 0) {
-            mgh.send(arr, 1, n);
-            mgh.recv(arr, 1, n, status);
-          } else {
-            mgh.recv(arr, 0, n, status);
-            mgh.send(arr, 0, n);
-          }
-          
+          events[0] = mgh.Irecv(arr, prev, n);
+          events[1] = mgh.Irecv(arr, next, n);
+          events[2] = mgh.Isend(arr, prev, n);
+          events[3] = mgh.Isend(arr, next, n);
+          #pragma unroll
+          for(auto& req : events)
+            req->wait();
           MPI_Barrier(MPI_COMM_WORLD);
-          std::shared_ptr<async_event> send, recv;
+          
 
           if (ctx.rank() == 0)
               t_start = MPI_Wtime();
 
-          while (iter < max_iter) {
+          for (auto iter = 0; iter < max_iter; iter++) {
             // std::cout << iter << "\n";
-            if (ctx.rank() == 0) {
-              send = mgh.Isend(arr,1,n);
-              recv = mgh.Irecv(arr, 1, n);
-            } else {
-              recv = mgh.Irecv(arr, 0, n);
-              recv->wait();
-              send = mgh.Isend(arr, 0, n);
+              events[0] = mgh.Irecv(arr, prev, n);
+              events[1] = mgh.Irecv(arr, next, n);
+              events[2] = mgh.Isend(arr, prev, n);
+              events[3] = mgh.Isend(arr, next, n);
+              
+              #pragma unroll
+              for(auto& req : events)
+                req->wait();
+                
             }
-            // message_group->wait_all();
-            send->wait();
-            recv->wait();
-            iter++;
-          }
-
+            
           message_group->barrier();
           if (ctx.rank() == 0) {
             t_end = MPI_Wtime();
@@ -104,8 +98,7 @@ int main(int argc, char **argv) {
     //      << "\n";
     // 	Print_times(mpi_time, num_restart);
   }
-  free(arr);
-  free(myarr);
+
   return 0;
 } // end main
 

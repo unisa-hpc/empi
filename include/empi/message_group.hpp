@@ -19,9 +19,9 @@
 namespace empi {
   class MessageGroup {
    public:
-	explicit MessageGroup(MPI_Comm comm) : comm(comm) {
+	explicit MessageGroup(MPI_Comm comm, size_t pool_size = request_pool::default_pool_size) : comm(comm) {
 	  MPI_Checkcomm(comm); //TODO: exception?
-	  _request_pool = std::make_shared<request_pool>();
+	  _request_pool = std::make_shared<request_pool>(pool_size);
 	}
 
 	//Wait an all Message in this group, so that no request is pending
