@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 include(FindMPI REQUIRED)
 
 option(MPI_EXAMPLES "Enable MPI examples" OFF)
+option(ENABLE_TESTS "Enable testing" OFF)
 
 set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/empi.hpp
@@ -45,5 +46,10 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
 endif()
 
+if(ENABLE_TESTS)
+	enable_testing()
+	add_subdirectory(lib/Catch2) # Find Catch2
+	add_subdirectory(test)
+endif()
 
 add_subdirectory(examples)
