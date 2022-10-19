@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 include(FindMPI REQUIRED)
 
 option(MPI_EXAMPLES "Enable MPI examples" OFF)
+option(BUILD_MPL "Build MPL" OFF)
 option(ENABLE_TESTS "Enable testing" OFF)
 
 set(header_files
@@ -50,6 +51,10 @@ if(ENABLE_TESTS)
 	enable_testing()
 	add_subdirectory(lib/Catch2) # Find Catch2
 	add_subdirectory(test)
+endif()
+
+if(BUILD_MPL)
+	add_subdirectory(lib/mpl-subset)
 endif()
 
 add_subdirectory(examples)

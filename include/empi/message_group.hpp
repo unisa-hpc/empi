@@ -21,6 +21,10 @@ namespace empi {
    public:
 	explicit MessageGroup(MPI_Comm comm, size_t pool_size = request_pool::default_pool_size) : comm(comm) {
 	  MPI_Checkcomm(comm); //TODO: exception?
+	   MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
+	   MPI_Comm_size(MPI_COMM_WORLD, &_size);
+	   _next = (_rank + 1) % _size;
+	   _prec = _rank == 0 ? (_size - 1) : (_rank - 1);
 	  _request_pool = std::make_shared<request_pool>(pool_size);
 	}
 
@@ -28,6 +32,14 @@ namespace empi {
 	~MessageGroup(){
 	  wait_all();
 	}
+
+	[[nodiscard]] int rank() const { return _rank; }
+
+	[[nodiscard]] int size() const { return _size; }
+
+	[[nodiscard]] int prec() const { return _prec; }
+
+	[[nodiscard]] int next() const { return _next; }
 
 	int barrier(){
 	  return MPI_Barrier(comm);
@@ -305,6 +317,10 @@ namespace empi {
    private:
 	MPI_Comm comm;
 	std::shared_ptr<request_pool> _request_pool;
+	int _prec;
+	int _next;
+	int _rank;
+	int _size;
 
   };
 }

@@ -39,6 +39,6 @@ echo "Config: size: $SIZE -- ITER: $ITER -- RESTART: $RESTART -- NUM_PROC: $NUM_
 # run_experiment "Ping pong: EMPI" "ping_pong/empi_ping_pong"
 
 run_experiment "Bidirectional ring: MPI" "bdring/mpi_bdring"
-# run_experiment "Bidirectional ring: MPI (UNCHECKED)" "bdring/umpi_bdring"
-# run_experiment "Bidirectional ring: EMPI" "bdring/empi_bdring"
+run_experiment "Bidirectional ring: MPI (UNCHECKED)" "bdring/umpi_bdring"
+run_experiment "Bidirectional ring: EMPI" "bdring/empi_bdring"
 # run_experiment "Bidirectional ring: MPL" "bdring/mpl_bdring"

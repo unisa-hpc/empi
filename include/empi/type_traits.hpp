@@ -58,10 +58,6 @@ struct is_instance : public std::false_type {};
 template <class...Ts, template <class, class...> class U>
 struct is_instance<U<Ts...>, U> : public std::true_type {};
 
-template<typename T>
-struct val{
-  T x;
-};
 
 template<typename T, template <class, class...> class K>
 concept has_parameter = requires(T f){
@@ -76,9 +72,6 @@ std::remove_cvref_t<
 struct remove_all : remove_all<U> {};
 template<class T> struct remove_all<T, T> { typedef T type; };
 template<class T> using remove_all_t = typename remove_all<T>::type;
-
-
-
 
 
 // ----------- CONCEPTS ------------

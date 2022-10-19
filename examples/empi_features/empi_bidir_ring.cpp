@@ -14,17 +14,17 @@ int main(int argc, char** argv) {
 
   std::vector<double> src(size);
   std::vector<double> dest(size);
-//  std::fill(src.begin(),src.end(),ctx.rank());
+//  std::fill(src.begin(),src.end(),message_group->rank());
 
-  std::cout << "RANK: " << ctx.rank() << " - prev: " << ctx.prev() << " - succ: " << ctx.succ() << "\n";
+  std::cout << "RANK: " << message_group->rank() << " - prev: " << message_group->prec() << " - succ: " << message_group->next() << "\n";
   // with fixed-tag and type message context
   message_group->run_and_wait([&](empi::MessageGroupHandler<double, empi::NOTAG, size> &mgh){
-      mgh.Isend(src, ctx.succ(), tag1);
-      mgh.Irecv(dest, ctx.prev(), tag1);
+      mgh.Isend(src, message_group->next(), tag1);
+      mgh.Irecv(dest, message_group->prec(), tag1);
   }); // Waitall is implicit here
 
   for(auto& e : dest){
-	if(e != ctx.prev()){
+	if(e != message_group->prec()){
 	  std::cerr << "TEST FAILED\n";
 	  return -1;
 	}

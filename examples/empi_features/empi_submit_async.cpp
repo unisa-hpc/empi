@@ -14,12 +14,12 @@ int main(int argc, char **argv) {
 
   // with fixed-tag and type message group handler
   message_group->run([&](empi::MessageGroupHandler<int, tag, 1> &mgh) {
-	if (ctx.rank() == 0) {
+	if (message_group->rank() == 0) {
 	  number = 15;
 	  auto event = mgh.Isend(&number,1);
 	  event->wait();
 	  std::cout << "Message arrived!\n";
-	} else if (ctx.rank() == 1) {
+	} else if (message_group->rank() == 1) {
 	  MPI_Status status;
 	  mgh.recv(v,0,status);
 

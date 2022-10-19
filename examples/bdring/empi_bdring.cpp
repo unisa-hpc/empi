@@ -46,8 +46,8 @@ int main(int argc, char **argv) {
   auto ctx = empi::Context(&argc, &argv);
   auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
 
-  const volatile auto prev = ctx.prev();
-  const volatile auto next = ctx.succ();
+  const volatile auto prev = message_group->prec();
+  const volatile auto next = message_group->next();
 
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
           MPI_Barrier(MPI_COMM_WORLD);
           
 
-          if (ctx.rank() == 0)
+          if (message_group->rank() == 0)
               t_start = MPI_Wtime();
 
           for (auto iter = 0; iter < max_iter; iter++) {
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
             }
             
           message_group->barrier();
-          if (ctx.rank() == 0) {
+          if (message_group->rank() == 0) {
             t_end = MPI_Wtime();
             mpi_time =
                 (t_end - t_start) * SCALE;
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
 
   message_group->barrier();
 
-  if (ctx.rank() == 0) {
+  if (message_group->rank() == 0) {
     // cout << "\nData Size: " << nBytes << " bytes\n";
     cout << mpi_time << "\n";
     // cout << "Mean of communication times: " << Mean(mpi_time, num_restart)

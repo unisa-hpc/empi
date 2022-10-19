@@ -57,6 +57,7 @@ int main(int argc, char **argv) {
   _succ = (_rank + 1) % _size;
   _prev = _rank == 0 ? (_size - 1) : (_rank - 1);
 
+  {
     MPI_Request requets[4];
     // Warmup
     MPI_Irecv(arr.data(), n, MPI_CHAR, _prev, MPI_ANY_TAG, MPI_COMM_WORLD,  &requets[0]);
@@ -68,12 +69,14 @@ int main(int argc, char **argv) {
     for(auto& requet : requets){
         MPI_Wait(&requet, &status);
     }
+  }
     MPI_Barrier(MPI_COMM_WORLD);
     
     if (myid == 0)
       t_start = MPI_Wtime();
 
     for(auto iter = 0; iter < max_iter; iter++){
+        MPI_Request requets[4];
         MPI_Irecv(arr.data(), n, MPI_CHAR, _prev, MPI_ANY_TAG, MPI_COMM_WORLD,  &requets[0]);
         MPI_Irecv(arr.data(), n, MPI_CHAR, _succ, MPI_ANY_TAG, MPI_COMM_WORLD, &requets[1]);
         MPI_Isend(arr.data(), n, MPI_CHAR, _prev, 0, MPI_COMM_WORLD, &requets[2]);

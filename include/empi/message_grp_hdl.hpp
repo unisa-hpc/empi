@@ -12,6 +12,8 @@
 #include <memory>
 
 namespace empi{
+
+
 	template<typename T1, Tag TAG = NOTAG, std::size_t SIZE = 0>
 	class MessageGroupHandler{
 
@@ -103,8 +105,7 @@ namespace empi{
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG != -1)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest, int size){
 			auto event = _request_pool->get_req();
-			//TODO:Remove
-			event->res = MPI_Isend(details::get_underlying_pointer(data), size, details::mpi_type<T>::get_type(),dest,TAG.value,communicator,event->get_request());
+			event->res = MPI_IUsend(details::get_underlying_pointer(data), size, details::mpi_type<T>::get_type(),dest,TAG.value,communicator,event->get_request());
 			return event;
 		  }
 
@@ -142,9 +143,7 @@ namespace empi{
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG >= -2)
 		std::shared_ptr<async_event> Irecv(K&& data, int src, int size){
 		  auto event = _request_pool->get_req();
-		//   auto event = _request_pool->get_req();
-		  //TODO: 
-		  event->res = MPI_Irecv(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),src,TAG.value,communicator,event->request.get());
+		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),src,TAG.value,communicator,event->request.get());
 
 		  return event;
 		}

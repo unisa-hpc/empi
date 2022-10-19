@@ -4,10 +4,10 @@
 int main(argc,argv) {  
   empi::Context ctx(&argc, &argv);
   
-  int prev = ctx.rank()-1;
-  int next = ctx.rank()+1;
-  if (ctx.rank() == 0) prev = ctx.size() - 1;
-  if (ctx.rank() == (ctx.size() - 1)) next = 0;
+  int prev = message_group->rank()-1;
+  int next = message_group->rank()+1;
+  if (message_group->rank() == 0) prev = message_group->size() - 1;
+  if (message_group->rank() == (message_group->size() - 1)) next = 0;
 
   const tag1 = 1;
   const tag2 = 2;

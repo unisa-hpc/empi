@@ -44,18 +44,19 @@ int main(int argc, char **argv) {
   myarr = new char[n];
   arr = new char[n];
 
-  if (ctx.rank() == 0) {
+  auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
+  MPI_Status status;
+  
+  if (message_group->rank() == 0) {
     for (int j = 0; j < n; j++)
       arr[j] = 0;
   }
 
-  MPI_Status status;
-  auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
 
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
           // First iter
-          if (ctx.rank() == 0) {
+          if (message_group->rank() == 0) {
             mgh.send(arr, 1, n);
             mgh.recv(arr, 1, n, status);
           } else {
@@ -65,11 +66,11 @@ int main(int argc, char **argv) {
           
           MPI_Barrier(MPI_COMM_WORLD);
 
-          if (ctx.rank() == 0)
+          if (message_group->rank() == 0)
               t_start = MPI_Wtime();
 
           while (iter < max_iter) {
-            if (ctx.rank() == 0) {
+            if (message_group->rank() == 0) {
               mgh.send(arr, 1, n);
               mgh.recv(arr, 1, n, status);
             } else {
@@ -80,7 +81,7 @@ int main(int argc, char **argv) {
           }
 
           message_group->barrier();
-          if (ctx.rank() == 0) {
+          if (message_group->rank() == 0) {
             t_end = MPI_Wtime();
             mpi_time =
                 (t_end - t_start) * SCALE;
@@ -89,7 +90,7 @@ int main(int argc, char **argv) {
 
   message_group->barrier();
 
-  if (ctx.rank() == 0) {
+  if (message_group->rank() == 0) {
     // cout << "\nData Size: " << nBytes << " bytes\n";
     cout << mpi_time << "\n";
     // cout << "Mean of communication times: " << Mean(mpi_time, num_restart)

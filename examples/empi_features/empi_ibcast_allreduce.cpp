@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 
   std::vector<double> src(size);
   std::vector<double> dest(size);
-  if(ctx.rank() == 0)
+  if(message_group->rank() == 0)
   	std::fill(src.begin(),src.end(),10);
 
   // with fixed-tag and type message context
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 	message_group->Allreduce<size>(src, dest, MPI_SUM);
 
   for(auto& e : dest){
-	if(e != (10 * ctx.size())){
+	if(e != (10 * message_group->size())){
 	  std::cerr << "TEST FAILED\n";
 	  return -1;
 	}

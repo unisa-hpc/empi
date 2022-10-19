@@ -5,8 +5,9 @@
 #ifndef EMPI_PROJECT_UTILS_HPP
 #define EMPI_PROJECT_UTILS_HPP
 
-namespace empi{
-	namespace details{
+#include <empi/type_traits.hpp>
+
+namespace empi::details{
 
 		template<typename T>
 		requires has_data<T>
@@ -26,6 +27,5 @@ namespace empi{
 
 
 	}
-}
 
 #endif //EMPI_PROJECT_UTILS_HPP

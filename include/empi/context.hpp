@@ -18,10 +18,7 @@ namespace empi{
     public:
         Context(int* argc, char*** argv){
             MPI_Init(argc, argv);
-            MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
-            MPI_Comm_size(MPI_COMM_WORLD, &_size);
-            _succ = (_rank + 1) % _size;
-            _prev = _rank == 0 ? (_size - 1) : (_rank - 1);
+           
         }
 
         Context(const Context& c) = delete;
@@ -32,21 +29,7 @@ namespace empi{
         }
 
 
-        int rank() const{
-            return _rank;
-        }
-
-        int size() const{
-            return _size;
-        }
-
-        int prev() const{
-            return _prev;
-        }
-
-        int succ() const{
-            return _succ;
-        }
+        
 
 		std::unique_ptr<MessageGroup> create_message_group(MPI_Comm comm, size_t pool_size = request_pool::default_pool_size) {
 		return std::make_unique<MessageGroup>(comm);
