@@ -1,6 +1,7 @@
 #ifndef EMPI_PROJECT_MGH_HPP
 #define EMPI_PROJECT_MGH_HPP
 
+#include "mpi.h"
 #include <empi/request_pool.hpp>
 #include <empi/type_traits.hpp>
 #include <empi/tag.hpp>
@@ -32,7 +33,12 @@ namespace empi{
 
 		  MessageGroupHandler(const MessageGroupHandler& chg) = default;
 		  MessageGroupHandler(MessageGroupHandler&& chg)  noexcept = default;
+		
+		 // -------------- UTILITY -----------------------------
 
+		int inline barrier() const {
+			return MPI_Barrier(communicator);
+		}
 
 		  // -------------- SEND -----------------------------------------
 		  template<typename K>

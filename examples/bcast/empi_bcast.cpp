@@ -2,11 +2,11 @@
 #include "empi/message_grp_hdl.hpp"
 #include <chrono>
 #include <cmath>
+#include <cstdio>
+#include <ctime>
 #include <iostream>
 #include <malloc.h>
 #include <mpi.h>
-#include <cstdio>
-#include <ctime>
 #include <unistd.h>
 
 #include <empi/empi.hpp>
@@ -21,7 +21,6 @@ using namespace std;
 double Mean(double[], int);
 double Median(double[], int);
 void Print_times(double[], int);
-
 
 int main(int argc, char **argv) {
   int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
@@ -40,43 +39,29 @@ int main(int argc, char **argv) {
   nBytes = std::pow(2, pow_2);
   n = nBytes;
 
-  std::vector<char> myarr(n,0);
+  std::vector<char> myarr(n, 0);
 
   auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
   MPI_Status status;
-  const int rank = message_group->rank();
+
   message_group->run(
-      [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
-          // First iter
-          if(rank == 0){
-            mgh.send(myarr.data(),1,n);
-            mgh.recv(myarr.data(),1,n,status);
-          }else{
-            mgh.recv(myarr.data(),0,n,status);
-            mgh.send(myarr.data(),0,n);
-          }
-          mgh.barrier();
+      [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) {
+        // First iter
+        mgh.Bcast(myarr.data(), 0, n);
 
-          if (message_group->rank() == 0)
-              t_start = MPI_Wtime();
+        if (message_group->rank() == 0)
+          t_start = MPI_Wtime();
 
-          while (iter < max_iter) {
-            if(rank == 0){
-              mgh.send(myarr.data(),1,n);
-              mgh.recv(myarr.data(),1,n,status);
-            }else{
-              mgh.recv(myarr.data(),0,n,status);
-              mgh.send(myarr.data(),0,n);
-          }
-            iter++;
-          }
+        while (iter < max_iter) {
+          mgh.Bcast(myarr.data(), 0, n);
+          iter++;
+        }
 
-          message_group->barrier();
-          if (message_group->rank() == 0) {
-            t_end = MPI_Wtime();
-            mpi_time =
-                (t_end - t_start) * SCALE;
-          }
+        message_group->barrier();
+        if (message_group->rank() == 0) {
+          t_end = MPI_Wtime();
+          mpi_time = (t_end - t_start) * SCALE;
+        }
       });
 
   message_group->barrier();
@@ -86,7 +71,8 @@ int main(int argc, char **argv) {
     cout << mpi_time << "\n";
     // cout << "Mean of communication times: " << Mean(mpi_time, num_restart)
     //      << "\n";
-    // cout << "Median of communication times: " << Median(mpi_time, num_restart)
+    // cout << "Median of communication times: " << Median(mpi_time,
+    // num_restart)
     //      << "\n";
     // 	Print_times(mpi_time, num_restart);
   }

@@ -44,30 +44,19 @@ int main(int argc, char **argv) {
 
   auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
   MPI_Status status;
-  const int rank = message_group->rank();
+
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
           // First iter
-          if(rank == 0){
-            mgh.send(myarr.data(),1,n);
-            mgh.recv(myarr.data(),1,n,status);
-          }else{
-            mgh.recv(myarr.data(),0,n,status);
-            mgh.send(myarr.data(),0,n);
-          }
+          mgh.Ibcast(myarr.data(),0,n);
           mgh.barrier();
 
           if (message_group->rank() == 0)
               t_start = MPI_Wtime();
 
           while (iter < max_iter) {
-            if(rank == 0){
-              mgh.send(myarr.data(),1,n);
-              mgh.recv(myarr.data(),1,n,status);
-            }else{
-              mgh.recv(myarr.data(),0,n,status);
-              mgh.send(myarr.data(),0,n);
-          }
+            mgh.Ibcast(myarr.data(),0,n);
+            mgh.barrier();
             iter++;
           }
 
