@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
     comm_world.recv(arr.data(), l, 1);
   } else {
     comm_world.recv(arr.data(), l, 0);
-    comm_world.send(arr.data(), l, 1);
+    comm_world.send(arr.data(), l, 0);
   }
   comm_world.barrier();
 
@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
       comm_world.recv(arr.data(), l, 1);
     } else {
       comm_world.recv(arr.data(), l, 0);
-      comm_world.send(arr.data(), l, 1);
+      comm_world.send(arr.data(), l, 0);
     }
   }
 
