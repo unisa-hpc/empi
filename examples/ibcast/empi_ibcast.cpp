@@ -48,15 +48,16 @@ int main(int argc, char **argv) {
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
           // First iter
-          mgh.Ibcast(myarr.data(),0,n);
+          auto req = mgh.Ibcast(myarr.data(),0,n);
+          req->wait();
           mgh.barrier();
 
           if (message_group->rank() == 0)
               t_start = MPI_Wtime();
 
           while (iter < max_iter) {
-            mgh.Ibcast(myarr.data(),0,n);
-            mgh.barrier();
+            auto req = mgh.Ibcast(myarr.data(),0,n);
+            req->wait();
             iter++;
           }
 

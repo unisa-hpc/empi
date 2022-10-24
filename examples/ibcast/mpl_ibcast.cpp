@@ -49,15 +49,16 @@ int main(int argc, char **argv) {
   mpl::irequest_pool events;
 
   // First iter
-  comm_world.ibcast(0,arr.data(), l);
+  auto req = std::move(comm_world.ibcast(0,arr.data(), l));
+  req.wait();
   comm_world.barrier();
 
   if (comm_world.rank() == 0)
     t_start = mpl::environment::wtime();
 
   for (auto iter = 0; iter < max_iter; iter++) {
-    comm_world.ibcast(0,arr.data(), l);
-    comm_world.barrier();
+    auto req = std::move(comm_world.ibcast(0,arr.data(), l));
+    req.wait();
   }
 
   comm_world.barrier();

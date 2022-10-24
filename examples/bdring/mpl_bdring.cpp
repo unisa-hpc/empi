@@ -72,10 +72,10 @@ int main(int argc, char **argv) {
 
     for (auto iter = 0; iter < max_iter; iter++) {
       // std::cout << iter << "\n";
-        r1 = comm_world.isend(arr.data(), l, _prev);
-        r2 = comm_world.isend(arr.data(), l, _succ);
-        r3 = comm_world.irecv(arr.data(), l, _prev);
-        r4 = comm_world.irecv(arr.data(), l, _succ);
+        r1 = std::move(comm_world.isend(arr.data(), l, _prev));
+        r2 = std::move(comm_world.isend(arr.data(), l, _succ));
+        r3 = std::move(comm_world.irecv(arr.data(), l, _prev));
+        r4 = std::move(comm_world.irecv(arr.data(), l, _succ));
 
         r1.wait();
         r2.wait();
