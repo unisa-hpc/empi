@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <malloc.h>
@@ -24,21 +25,16 @@ double Median(double[], int);
 void Print_times(double[], int);
 
 int main(int argc, char **argv) {
-  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
-                                                         pow_2;
+  int myid, n, max_iter, pow_2;
   double t_start, t_end, t_start_inner;
   constexpr int SCALE = 1000000;
 
   empi::Context ctx(&argc, &argv);
-
   // ------ PARAMETER SETUP -----------
-  pow_2 = atoi(argv[1]);
-  max_iter = atoi(argv[2]);
-  // int num_restart = strtol(argv[3], NULL, 10);
-
+  pow_2 =    static_cast<int>(strtol(argv[1],nullptr,10));
+  max_iter = static_cast<int>(strtol(argv[2],nullptr,10));
   double mpi_time = 0.0;
-  nBytes = std::pow(2, pow_2);
-  n = nBytes;
+  n = static_cast<int>(std::pow(2, pow_2));
 
   std::vector<value_type> myarr(n, 0);
   std::vector<value_type> dest(n, 0);
@@ -50,16 +46,16 @@ int main(int argc, char **argv) {
       [&](empi::MessageGroupHandler<value_type, empi::Tag{0}, empi::NOSIZE> &mgh) {
         // First iter
         mgh.Allreduce(myarr.data(),dest.data(),n,MPI_SUM);
+        mgh.barrier();
 
         if (message_group->rank() == 0)
           t_start = MPI_Wtime();
 
-        while (iter < max_iter) {
+        for(auto iter = 0; iter < max_iter; iter++){
           mgh.Allreduce(myarr.data(),dest.data(),n,MPI_SUM);
-          iter++;
         }
 
-        message_group->barrier();
+        mgh.barrier();
         if (message_group->rank() == 0) {
           t_end = MPI_Wtime();
           mpi_time = (t_end - t_start) * SCALE;
@@ -81,7 +77,7 @@ int main(int argc, char **argv) {
   return 0;
 } // end main
 
-double Mean(double a[], int n) {
+double Mean(const double *a, int n) {
   double sum = 0.0;
   for (int i = 0; i < n; i++)
     sum += a[i];
@@ -89,7 +85,7 @@ double Mean(double a[], int n) {
   return (sum / (double)n);
 }
 
-double Median(double a[], int n) {
+double Median(double* a, int n) {
   sort(a, a + n);
   if (n % 2 != 0)
     return a[n / 2];
@@ -97,7 +93,7 @@ double Median(double a[], int n) {
   return (a[(n - 1) / 2] + a[n / 2]) / 2.0;
 }
 
-void Print_times(double a[], int n) {
+void Print_times(const double *a, int n) {
   cout << "\n------------------------------------";
   for (int t = 0; t < n; t++)
     cout << "\n " << a[t];

@@ -51,12 +51,13 @@ int main(int argc, char **argv) {
 
   // First iter
   comm_world.allreduce(mpl::plus<value_type>(), myarr.data(), arr.data(),l);
+  comm_world.barrier();
 
   if (comm_world.rank() == 0)
     t_start = mpl::environment::wtime();
 
   for (auto iter = 0; iter < max_iter; iter++) {
-    comm_world.bcast(0,arr.data(), l);
+    comm_world.allreduce(mpl::plus<value_type>(), myarr.data(), arr.data(),l);
   }
 
   comm_world.barrier();
