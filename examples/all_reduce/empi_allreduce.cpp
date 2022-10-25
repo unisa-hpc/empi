@@ -9,14 +9,8 @@
 #include <malloc.h>
 #include <mpi.h>
 #include <unistd.h>
-
 #include <empi/empi.hpp>
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
+
 using namespace std;
 using value_type = int;
 
@@ -28,8 +22,8 @@ int main(int argc, char **argv) {
   int myid, n, max_iter, pow_2;
   double t_start, t_end, t_start_inner;
   constexpr int SCALE = 1000000;
-
   empi::Context ctx(&argc, &argv);
+
   // ------ PARAMETER SETUP -----------
   pow_2 =    static_cast<int>(strtol(argv[1],nullptr,10));
   max_iter = static_cast<int>(strtol(argv[2],nullptr,10));
@@ -44,10 +38,13 @@ int main(int argc, char **argv) {
 
   message_group->run(
       [&](empi::MessageGroupHandler<value_type, empi::Tag{0}, empi::NOSIZE> &mgh) {
-        // First iter
+
+        // Warmup
+        mgh.barrier();
         mgh.Allreduce(myarr.data(),dest.data(),n,MPI_SUM);
         mgh.barrier();
 
+        // main measurement
         if (message_group->rank() == 0)
           t_start = MPI_Wtime();
 
