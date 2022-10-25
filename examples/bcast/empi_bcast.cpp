@@ -8,14 +8,8 @@
 #include <malloc.h>
 #include <mpi.h>
 #include <unistd.h>
-
 #include <empi/empi.hpp>
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
+
 using namespace std;
 
 double Mean(double[], int);
@@ -23,9 +17,9 @@ double Median(double[], int);
 void Print_times(double[], int);
 
 int main(int argc, char **argv) {
-  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
-                                                         pow_2;
-  double t_start, t_end, t_start_inner;
+  int myid, procs, err, max_iter, nBytes, sleep_time, range = 100, pow_2;
+  long n;
+  double t_start, t_end, t_start_inner, mpi_time = 0.0;
   constexpr int SCALE = 1000000;
 
   empi::Context ctx(&argc, &argv);
@@ -33,12 +27,9 @@ int main(int argc, char **argv) {
   // ------ PARAMETER SETUP -----------
   pow_2 = atoi(argv[1]);
   max_iter = atoi(argv[2]);
-  // int num_restart = strtol(argv[3], NULL, 10);
 
-  double mpi_time = 0.0;
   nBytes = std::pow(2, pow_2);
   n = nBytes;
-
   std::vector<char> myarr(n, 0);
 
   auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
@@ -46,15 +37,17 @@ int main(int argc, char **argv) {
 
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) {
-        // First iter
+        // Warmup
+        message_group->barrier();
         mgh.Bcast(myarr.data(), 0, n);
+        message_group->barrier();
 
+        //main measurement
         if (message_group->rank() == 0)
           t_start = MPI_Wtime();
 
-        while (iter < max_iter) {
+        for (auto iter = 0; iter < max_iter; iter++) {
           mgh.Bcast(myarr.data(), 0, n);
-          iter++;
         }
 
         message_group->barrier();
