@@ -38,7 +38,12 @@ echo "Config: size: $SIZE -- ITER: $ITER -- RESTART: $RESTART -- NUM_PROC: $NUM_
 # run_experiment "Ping pong: MPI (UNCHECKED)" "ping_pong/umpi_ping_pong"
 # run_experiment "Ping pong: EMPI" "ping_pong/empi_ping_pong"
 
-run_experiment "Bidirectional ring: MPI" "bdring/mpi_bdring"
-run_experiment "Bidirectional ring: MPI (UNCHECKED)" "bdring/umpi_bdring"
-run_experiment "Bidirectional ring: EMPI" "bdring/empi_bdring"
+# run_experiment "Bidirectional ring: MPI" "bdring/mpi_bdring"
+# run_experiment "Bidirectional ring: MPI (UNCHECKED)" "bdring/umpi_bdring"
+# run_experiment "Bidirectional ring: EMPI" "bdring/empi_bdring"
 # run_experiment "Bidirectional ring: MPL" "bdring/mpl_bdring"
+
+run_experiment "Allreduce: MPI" "all_reduce/mpi_allreduce"
+# run_experiment "Allreduce: MPI (UNCHECKED)" "all_reduce/umpi_allreduce"
+run_experiment "Allreduce: EMPI" "all_reduce/empi_allreduce"
+run_experiment "Allreduce: MPL" "all_reduce/mpl_allreduce"
