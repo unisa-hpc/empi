@@ -7,12 +7,6 @@
 #include <time.h>
 #include <unistd.h>
 
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
 using namespace std;
 
 double Mean(double[], int);
@@ -20,18 +14,16 @@ double Median(double[], int);
 void Print_times(double[], int);
 
 int main(int argc, char **argv) {
-  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
-                                                         pow_2;
+  int myid, procs, err, max_iter, sleep_time, iter = 0, range = 100, pow_2;
   double t_start, t_end;
+  long nBytes, n;
   constexpr int SCALE = 1000000;
   char *arr;
 
   MPI_Status status;
   err = MPI_Init(&argc, &argv);
   if (err != MPI_SUCCESS) {
-    cout << "\nError initializing MPI. \narg1: size of Data in Bytes, arg2: "
-            "number of iterations, arg3: sleep time between iterations, arg4: "
-            "name (ip) of second node\n";
+    cout << "\nError initializing MPI.\n";
     MPI_Abort(MPI_COMM_WORLD, err);
   }
 
@@ -39,6 +31,7 @@ int main(int argc, char **argv) {
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
   MPI_Request request;
   
+  // ------ PARAMETER SETUP -----------
   pow_2 = atoi(argv[1]);
   max_iter = atoi(argv[2]);
 
@@ -55,17 +48,15 @@ int main(int argc, char **argv) {
     MPI_Barrier(MPI_COMM_WORLD);
     MPI_Ibcast(arr, n, MPI_CHAR, 0, MPI_COMM_WORLD, &request);
     MPI_Wait(&request,&status);
-    
     MPI_Barrier(MPI_COMM_WORLD);
+    
     //main measurement
     if (myid == 0)
       t_start = MPI_Wtime();
 
-    while (iter < max_iter) {
+    for (auto iter = 0; iter < max_iter; iter++) {
     MPI_Ibcast(arr, n, MPI_CHAR, 0, MPI_COMM_WORLD, &request);
     MPI_Wait(&request,&status);
-    //MPI_Barrier(MPI_COMM_WORLD);
-    iter++;
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
