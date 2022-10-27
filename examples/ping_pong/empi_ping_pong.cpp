@@ -8,24 +8,16 @@
 #include <cstdio>
 #include <ctime>
 #include <unistd.h>
-
 #include <empi/empi.hpp>
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
+
 using namespace std;
 
 double Mean(double[], int);
 double Median(double[], int);
 void Print_times(double[], int);
 
-
 int main(int argc, char **argv) {
-  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
-                                                         pow_2;
+  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100, pow_2;
   double t_start, t_end, t_start_inner;
   constexpr int SCALE = 1000000;
 
@@ -34,20 +26,20 @@ int main(int argc, char **argv) {
   // ------ PARAMETER SETUP -----------
   pow_2 = atoi(argv[1]);
   max_iter = atoi(argv[2]);
-  // int num_restart = strtol(argv[3], NULL, 10);
-
+  
   double mpi_time = 0.0;
   nBytes = std::pow(2, pow_2);
   n = nBytes;
-
   std::vector<char> myarr(n,0);
 
   auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
   MPI_Status status;
   const int rank = message_group->rank();
+ 
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
-          // First iter
+          // Warm up
+          mgh.barrier();
           if(rank == 0){
             mgh.send(myarr.data(),1,n);
             mgh.recv(myarr.data(),1,n,status);
@@ -60,22 +52,20 @@ int main(int argc, char **argv) {
           if (message_group->rank() == 0)
               t_start = MPI_Wtime();
 
-          while (iter < max_iter) {
+          for (auto iter = 0; iter < max_iter; iter++) {
             if(rank == 0){
               mgh.send(myarr.data(),1,n);
               mgh.recv(myarr.data(),1,n,status);
-            }else{
+            } else {
               mgh.recv(myarr.data(),0,n,status);
               mgh.send(myarr.data(),0,n);
-          }
-            iter++;
+            }
           }
 
           message_group->barrier();
           if (message_group->rank() == 0) {
             t_end = MPI_Wtime();
-            mpi_time =
-                (t_end - t_start) * SCALE;
+            mpi_time = (t_end - t_start) * SCALE;
           }
       });
 

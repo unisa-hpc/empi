@@ -6,16 +6,9 @@
 #include <malloc.h>
 #include <mpi.h>
 #include <unistd.h>
-
 #include <mpl/mpl.hpp>
 #include <vector>
 
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
 using namespace std;
 
 using value_type = char;
@@ -25,18 +18,14 @@ double Median(double[], int);
 void Print_times(double[], int);
 
 int main(int argc, char **argv) {
-  double t_start, t_end;
-  double mpi_time = 0.0;
+  double t_start, t_end, mpi_time = 0.0;
   constexpr int SCALE = 1000000;
-
-  int err;
-  long pow_2_bytes;
-  int n;
-  int myid;
-  long max_iter;
+  int err, n, myid;
+  long pow_2_bytes, max_iter;
 
   MPI_Status status;
 
+   // ------ PARAMETER SETUP -----------
   pow_2_bytes = strtol(argv[1], nullptr, 10);
   n = static_cast<int>(std::pow(2, pow_2_bytes));
   max_iter = strtol(argv[2], nullptr, 10);
@@ -48,7 +37,8 @@ int main(int argc, char **argv) {
   mpl::contiguous_layout<value_type> l(n);
   mpl::irequest_pool events;
 
-  // First iter
+  // Warmup
+  comm_world.barrier();
   if (comm_world.rank() == 0) {
     comm_world.send(arr.data(), l, 1);
     comm_world.recv(arr.data(), l, 1);
