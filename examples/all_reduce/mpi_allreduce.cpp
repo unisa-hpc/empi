@@ -10,14 +10,7 @@
 #include <time.h>
 #include <unistd.h>
 
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
 using namespace std;
-
 using value_type = int;
 
 double Mean(double[], int);
@@ -25,8 +18,7 @@ double Median(double[], int);
 void Print_times(double[], int);
 
 int main(int argc, char **argv) {
-  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
-                                                         pow_2;
+  int myid, procs, n, err, max_iter, nBytes, sleep_time, range = 100, pow_2;
   double t_start, t_end, t_start_inner;
   constexpr int SCALE = 1000000;
 
@@ -53,7 +45,7 @@ int main(int argc, char **argv) {
   if (myid == 0)
     t_start = MPI_Wtime();
 
-  while (iter < max_iter) {
+  for(auto iter = 0; iter < max_iter; iter++){
     MPI_Allreduce(arr.data(), dest.data(), n, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
     iter++;
   }
@@ -75,8 +67,6 @@ int main(int argc, char **argv) {
     //      << "\n";
     // Print_times(mpi_time, num_restart);
   }
-
-
   MPI_Finalize();
   return 0;
 } // end main

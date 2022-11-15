@@ -7,12 +7,6 @@
 #include <time.h>
 #include <unistd.h>
 
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
 using namespace std;
 
 double Mean(double[], int);
@@ -27,25 +21,23 @@ int main(int argc, char **argv) {
   char *arr, *myarr;
 
   MPI_Status status;
+
   err = MPI_Init(&argc, &argv);
   if (err != MPI_SUCCESS) {
-    cout << "\nError initializing MPI. \narg1: size of Data in Bytes, arg2: "
-            "number of iterations, arg3: sleep time between iterations, arg4: "
-            "name (ip) of second node\n";
+    cout << "\nError initializing MPI.\n";
     MPI_Abort(MPI_COMM_WORLD, err);
   }
 
   MPI_Comm_size(MPI_COMM_WORLD, &procs);
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
+  // ------ PARAMETER SETUP -----------
   pow_2 = atoi(argv[1]);
   max_iter = atoi(argv[2]);
-  // pongnode = argv[4];
 
   double mpi_time;
   nBytes = pow(2, pow_2);
   n = nBytes;
-
   myarr = new char[n];
   arr = new char[n];
 
@@ -53,8 +45,8 @@ int main(int argc, char **argv) {
     for (int j = 0; j < n; j++)
       arr[j] = 0;
   }
-
     // Warmup
+    MPI_Barrier(MPI_COMM_WORLD);
     if (myid == 0) {
         MPI_Send(arr, n, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
         MPI_Recv(arr, n, MPI_CHAR, 1, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
@@ -62,13 +54,12 @@ int main(int argc, char **argv) {
         MPI_Recv(myarr, n, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         MPI_Send(myarr, n, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
       }
-
     MPI_Barrier(MPI_COMM_WORLD);
 
     if (myid == 0)
       t_start = MPI_Wtime();
 
-    while (iter < max_iter) {
+    for (auto iter = 0; iter < max_iter; iter++) {
       if (myid == 0) {
         MPI_Send(arr, n, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
         MPI_Recv(arr, n, MPI_CHAR, 1, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
@@ -76,7 +67,6 @@ int main(int argc, char **argv) {
         MPI_Recv(myarr, n, MPI_CHAR, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         MPI_Send(myarr, n, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
       }
-      iter++;
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
@@ -85,8 +75,8 @@ int main(int argc, char **argv) {
       mpi_time = (t_end - t_start) * SCALE;
     }
   
-
   MPI_Barrier(MPI_COMM_WORLD);
+  
   if (myid == 0) {
     // cout << "\nData Size: " << nBytes << " bytes\n";
     cout << mpi_time << "\n";

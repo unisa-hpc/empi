@@ -7,18 +7,10 @@
 #include <mpi.h>
 #include <mpl/operator.hpp>
 #include <unistd.h>
-
 #include <mpl/mpl.hpp>
 #include <vector>
 
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
 using namespace std;
-
 using value_type = int;
 
 double Mean(double[], int);
@@ -38,6 +30,7 @@ int main(int argc, char **argv) {
 
   MPI_Status status;
 
+  // ------ PARAMETER SETUP -----------
   pow_2_bytes = strtol(argv[1], nullptr, 10);
   n = static_cast<int>(std::pow(2, pow_2_bytes));
   max_iter = strtol(argv[2], nullptr, 10);
@@ -49,10 +42,12 @@ int main(int argc, char **argv) {
   mpl::contiguous_layout<value_type> l(n);
   mpl::irequest_pool events;
 
-  // First iter
+  // Warmup
+  comm_world.barrier();
   comm_world.allreduce(mpl::plus<value_type>(), myarr.data(), arr.data(),l);
   comm_world.barrier();
 
+  // main measurement
   if (comm_world.rank() == 0)
     t_start = mpl::environment::wtime();
 

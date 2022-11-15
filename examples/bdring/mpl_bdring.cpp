@@ -6,31 +6,20 @@
 #include <cstdio>
 #include <ctime>
 #include <unistd.h>
-
 #include <mpl/mpl.hpp>
 #include <vector>
 
-
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
 using namespace std;
-
 using value_type = char;
 
 double Mean(double[], int);
 double Median(double[], int);
 void Print_times(double[], int);
 
-
 int main(int argc, char **argv) {
- double t_start, t_end;
+  double t_start, t_end;
   double mpi_time = 0.0;
   constexpr int SCALE = 1000000;
-
   int err;
   long pow_2_bytes;
   int n;
@@ -43,7 +32,6 @@ int main(int argc, char **argv) {
   n = static_cast<int>(std::pow(2, pow_2_bytes));
   max_iter = strtol(argv[2], nullptr, 10);
 
-  std::vector<value_type> myarr(n);
   std::vector<value_type> arr(n);
 
   const mpl::communicator &comm_world(mpl::environment::comm_world());
@@ -55,7 +43,8 @@ int main(int argc, char **argv) {
 
     mpl::irequest_pool events;
 
-    // First iter
+    // Warmup
+    comm_world.barrier();
     auto r1{comm_world.isend(arr.data(),l, _prev)};
     auto r2{comm_world.isend(arr.data(),l, _succ)};
     auto r3{comm_world.irecv(arr.data(),l, _prev)};
@@ -71,7 +60,6 @@ int main(int argc, char **argv) {
         t_start = mpl::environment::wtime();
 
     for (auto iter = 0; iter < max_iter; iter++) {
-      // std::cout << iter << "\n";
         r1 = std::move(comm_world.isend(arr.data(), l, _prev));
         r2 = std::move(comm_world.isend(arr.data(), l, _succ));
         r3 = std::move(comm_world.irecv(arr.data(), l, _prev));
