@@ -285,7 +285,12 @@ namespace empi {
 	  return h.template Allreduce(sendbuf,recvbuf,size,op);
 	}
 	// ------------------ END ALLREDUCE -----------------------------
-
+	// ------------------ GATHERV -----------------------------
+	template<typename T>
+	int gatherv(int root, T&& sendbuf,int sendcount, T&& recvbuf, int* recvcounts, int* displacements){
+	  MessageGroupHandler<typename get_true_type<T>::type , NOTAG, NOSIZE> h(comm, _request_pool);
+	  return h.template gatherv(root, sendbuf, sendcount, recvbuf, recvcounts, displacements);
+	}
 
 
 	template<typename T>

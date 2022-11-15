@@ -6,6 +6,7 @@
 #define EMPI_PROJECT_INCLUDE_EMPI_DATATYPE_HPP_
 
 #include <empi/type_traits.hpp>
+#include <type_traits>
 
 namespace empi::details {
 
@@ -34,7 +35,7 @@ struct mpi_type {
 	if constexpr (empi::has_data<T>)
 	  return mpi_type_impl<typename T::value_type>::get_type();
 	else
-	  return mpi_type_impl<T>::get_type();
+	  return mpi_type_impl<std::remove_pointer_t<T>>::get_type();
   }
 };
 

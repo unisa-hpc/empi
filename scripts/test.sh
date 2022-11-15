@@ -43,7 +43,11 @@ echo "Config: size: $SIZE -- ITER: $ITER -- RESTART: $RESTART -- NUM_PROC: $NUM_
 # run_experiment "Bidirectional ring: EMPI" "bdring/empi_bdring"
 # run_experiment "Bidirectional ring: MPL" "bdring/mpl_bdring"
 
-run_experiment "Allreduce: MPI" "all_reduce/mpi_allreduce"
-# run_experiment "Allreduce: MPI (UNCHECKED)" "all_reduce/umpi_allreduce"
-run_experiment "Allreduce: EMPI" "all_reduce/empi_allreduce"
-run_experiment "Allreduce: MPL" "all_reduce/mpl_allreduce"
+# run_experiment "Allreduce: MPI" "all_reduce/mpi_allreduce"
+# # run_experiment "Allreduce: MPI (UNCHECKED)" "all_reduce/umpi_allreduce"
+# run_experiment "Allreduce: EMPI" "all_reduce/empi_allreduce"
+# run_experiment "Allreduce: MPL" "all_reduce/mpl_allreduce"
+
+run_experiment "Vibrating String: MPI" "vibrating_string/mpi_vibrating_string"
+run_experiment "Vibrating String: EMPI" "vibrating_string/empi_vibrating_string"
+run_experiment "Vibrating String: MPL" "vibrating_string/mpl_vibrating_string"

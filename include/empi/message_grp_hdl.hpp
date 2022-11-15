@@ -222,7 +222,25 @@ namespace empi{
 	  }
 
 	  // ------------------------- END ALLREDUCE --------------------------
-
+	  // ------------------------- GATHERV --------------------------
+	//   int MPI_Gatherv(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
+    //             void *recvbuf, const int *recvcounts, const int *displs,
+    //             MPI_Datatype recvtype, int root, MPI_Comm comm)
+	//TODO: implement UGather
+	template<typename K>
+	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>)
+	  int gatherv(int root, K&& sendbuf,int sendcount, K&& recvbuf, int* recvcounts, int* displacements){
+		return MPI_Gatherv(details::get_underlying_pointer(sendbuf), 
+						   sendcount,
+						   details::mpi_type<T>::get_type(),
+						   details::get_underlying_pointer(recvbuf),
+						   recvcounts,
+						   displacements,
+						   details::mpi_type<T>::get_type(),
+						   root,
+						   communicator);
+	  }
+	  // ------------------------- END ALLREDUCE --------------------------
 
 
 		private:

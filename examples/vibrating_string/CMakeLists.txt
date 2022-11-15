@@ -1,0 +1,3 @@
+create_example(mpi_vibrating_string  mpi_vibrating_string.cpp)
+create_example(empi_vibrating_string  empi_vibrating_string.cpp)
+create_example(mpl_vibrating_string  mpl_vibrating_string.cpp)

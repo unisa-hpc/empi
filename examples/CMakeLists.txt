@@ -1,6 +1,7 @@
 macro(create_example TARGET_NAME SRC_FILE)
     add_executable(${TARGET_NAME} ${SRC_FILE})
     target_link_libraries(${TARGET_NAME} PUBLIC empi)
+    target_compile_options(${TARGET_NAME} PUBLIC -march=native -O3 )
 endmacro()
 
 add_subdirectory(all_reduce)
@@ -9,3 +10,4 @@ add_subdirectory(bdring)
 add_subdirectory(empi_features)
 add_subdirectory(ibcast)
 add_subdirectory(ping_pong)
+add_subdirectory(vibrating_string)
