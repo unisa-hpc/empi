@@ -37,9 +37,6 @@ target_include_directories(empi
   INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(empi INTERFACE MPI::MPI_CXX)
-# set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-# set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-# include(CPack)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The type of build" FORCE)

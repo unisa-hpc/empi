@@ -7,8 +7,12 @@
 
 #include <empi/type_traits.hpp>
 #include <type_traits>
+#include <memory.h>
 
 namespace empi::details {
+
+static constexpr bool no_status = false;
+
 
 template<typename T>
 struct mpi_type_impl {

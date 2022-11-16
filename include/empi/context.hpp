@@ -29,8 +29,6 @@ namespace empi{
         }
 
 
-        
-
 		std::unique_ptr<MessageGroup> create_message_group(MPI_Comm comm, size_t pool_size = request_pool::default_pool_size) {
 		return std::make_unique<MessageGroup>(comm);
 	  }
@@ -42,6 +40,7 @@ namespace empi{
          int _succ;
 
 	};
+
 
 
 

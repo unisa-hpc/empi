@@ -1,5 +1,3 @@
-#include "empi/context.hpp"
-#include "empi/message_grp_hdl.hpp"
 #include <chrono>
 #include <cmath>
 #include <iostream>
@@ -43,7 +41,7 @@ int main(int argc, char **argv) {
 
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
-          std::shared_ptr<async_event> events[4];
+          empi::async_event_p events[4];
           // Warmup
           message_group->barrier();
           events[0] = mgh.Irecv(arr, prev, n);
@@ -52,7 +50,7 @@ int main(int argc, char **argv) {
           events[3] = mgh.Isend(arr, next, n);
           #pragma unroll
           for(auto& req : events)
-            req->wait();
+            req->wait<empi::details::no_status>();
           message_group->barrier();
           
           if (message_group->rank() == 0)
@@ -66,7 +64,7 @@ int main(int argc, char **argv) {
               
               #pragma unroll
               for(auto& req : events)
-                req->wait();
+                req->wait<empi::details::no_status>();
           }
             
           message_group->barrier();

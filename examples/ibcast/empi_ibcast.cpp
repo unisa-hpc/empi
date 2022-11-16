@@ -1,5 +1,3 @@
-#include "empi/context.hpp"
-#include "empi/message_grp_hdl.hpp"
 #include <chrono>
 #include <cmath>
 #include <iostream>
@@ -40,7 +38,7 @@ int main(int argc, char **argv) {
           // Warmup
           mgh.barrier();
           auto req = mgh.Ibcast(myarr.data(),0,n);
-          req->wait();
+          req->wait<empi::details::no_status>();
           mgh.barrier();
 
           if (message_group->rank() == 0)
@@ -48,7 +46,7 @@ int main(int argc, char **argv) {
 
           for (auto iter = 0; iter < max_iter; iter++) {
           auto req = mgh.Ibcast(myarr.data(),0,n);
-          req->wait();
+          req->wait<empi::details::no_status>();
           }
 
           message_group->barrier();

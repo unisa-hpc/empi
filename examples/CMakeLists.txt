@@ -1,6 +1,7 @@
 macro(create_example TARGET_NAME SRC_FILE)
     add_executable(${TARGET_NAME} ${SRC_FILE})
-    target_link_libraries(${TARGET_NAME} PUBLIC empi)
+    target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+    target_link_libraries(${TARGET_NAME} INTERFACE empi)
     target_compile_options(${TARGET_NAME} PUBLIC -march=native -O3 )
 endmacro()
 

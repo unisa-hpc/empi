@@ -1,3 +1,4 @@
+#include "empi/datatype.hpp"
 #include <iostream>
 
 #include <empi/empi.hpp>
@@ -17,7 +18,7 @@ int main(int argc, char **argv) {
 	if (message_group->rank() == 0) {
 	  number = 15;
 	  auto event = mgh.Isend(&number,1);
-	  event->wait();
+	  event->wait<empi::details::no_status>();
 	  std::cout << "Message arrived!\n";
 	} else if (message_group->rank() == 1) {
 	  MPI_Status status;

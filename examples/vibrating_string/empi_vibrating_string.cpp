@@ -63,7 +63,7 @@ void f(std::unique_ptr<empi::MessageGroup>& comm_world){
     u_old_l[i] = u_0(x);
     u_l[i] = 0.5 * eps * (u_0(x - dx) + u_0(x + dx)) + (1.0 - eps) * u_0(x) + dt * u_0_dt(x);
   }
-  std::shared_ptr<async_event> events[4];
+  std::shared_ptr<empi::async_event> events[4];
   //propagate
   comm_world->run([&](empi::MessageGroupHandler<double,empi::NOTAG, 1> &cgh){
     // propagate
@@ -75,7 +75,7 @@ void f(std::unique_ptr<empi::MessageGroup>& comm_world){
       events[2] = cgh.Irecv(&u_new_l[0], C_rank - 1 >= 0 ? C_rank - 1 : MPI_PROC_NULL, empi::Tag{right_copy});
       events[3] = cgh.Irecv(&u_new_l[N_l[C_rank] - 1],C_rank + 1 < C_size ? C_rank + 1 : MPI_PROC_NULL, empi::Tag{left_copy});
       #pragma unroll 
-      for(auto& req: events) req->wait();
+      for(auto& req: events) req->wait<empi::details::no_status>();
       std::swap(u_l, u_old_l);
       std::swap(u_new_l, u_l);
     }
