@@ -2683,7 +2683,6 @@ void LagrangeLeapFrog(Domain& domain)
     * applied boundary conditions and slide surface considerations */
    LagrangeNodal(domain);
 
-
 #ifdef SEDOV_SYNC_POS_VEL_LATE
 #endif
 
@@ -2768,8 +2767,8 @@ int main(int argc, char *argv[])
    const mpl::communicator &comm_world(mpl::environment::comm_world());
 #elif defined(USE_EMPI)
    empi::Context ctx{&argc,&argv};
+   comm_world_s::comm_world = ctx.create_message_group(MPI_COMM_WORLD);
    
-   auto comm_world = ctx.create_message_group(MPI_COMM_WORLD);
 #else
    MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &thread_support);
    if (thread_support==MPI_THREAD_SINGLE)
@@ -2793,8 +2792,8 @@ int main(int argc, char *argv[])
    numRanks = comm_world.size();
    myRank = comm_world.rank();
 #elif defined(USE_EMPI)
-   numRanks = comm_world->size();
-   myRank = comm_world->rank();
+   numRanks = comm_world_s::comm_world->size();
+   myRank =   comm_world_s::comm_world->rank();
 #else   
    MPI_Comm_size(MPI_COMM_WORLD, &numRanks) ;
    MPI_Comm_rank(MPI_COMM_WORLD, &myRank) ;
@@ -2888,7 +2887,7 @@ int main(int argc, char *argv[])
    timeval start;
    gettimeofday(&start, NULL) ;
 #endif
-//debug to see region sizes
+// debug to see region sizes
 //   for(Int_t i = 0; i < locDom->numReg(); i++)
 //      std::cout << "region" << i + 1<< "size" << locDom->regElemSize(i) <<std::endl;
    while((locDom->time() < locDom->stoptime()) && (locDom->cycle() < opts.its)) {

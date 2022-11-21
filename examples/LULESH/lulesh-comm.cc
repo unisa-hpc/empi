@@ -680,7 +680,7 @@ void CommSend(Domain& domain, Int_t msgType,
    Int4_t ly  = xferFields*dy;  
    Int4_t l   = xferFields;  
    
-   std::vector<MPI_Request*> spool;
+   std::vector<empi::async_event_p> spool;
    empi::Tag stag{msgType};
 #endif
 
@@ -703,7 +703,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lxy, myRank - domain.tp()*domain.tp(), stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - domain.tp()*domain.tp(),lxy, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - domain.tp()*domain.tp(),lxy, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank - domain.tp()*domain.tp(), msgType,
@@ -724,7 +724,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lxy, myRank + domain.tp()*domain.tp(), stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + domain.tp()*domain.tp(),lxy, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + domain.tp()*domain.tp(),lxy, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank + domain.tp()*domain.tp(), msgType,
@@ -752,7 +752,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lxz, myRank - domain.tp(), stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - domain.tp(), lxz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - domain.tp(), lxz, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank - domain.tp(), msgType,
@@ -775,7 +775,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lxz, myRank + domain.tp(), stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + domain.tp(), lxz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + domain.tp(), lxz, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank + domain.tp(), msgType,
@@ -803,7 +803,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lyz, myRank - 1, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - 1, lyz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - 1, lyz, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank - 1, msgType,
@@ -826,7 +826,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lyz, myRank + 1, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + 1, lyz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + 1, lyz, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank + 1, msgType,
@@ -852,7 +852,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lz, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag));
 #else
          MPI_Isend(destAddr, xferFields*dz, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -875,7 +875,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lx, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag));
 #else
          MPI_Isend(destAddr, xferFields*dx, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -898,7 +898,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, ly, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag));
 #else
          MPI_Isend(destAddr, xferFields*dy, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -921,7 +921,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lz, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag));
 #else
          MPI_Isend(destAddr, xferFields*dz, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -944,7 +944,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lx, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag));
 #else
          MPI_Isend(destAddr, xferFields*dx, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -967,7 +967,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, ly, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag));
 #else
          MPI_Isend(destAddr, xferFields*dy, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -990,7 +990,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lz, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag));
 #else
          MPI_Isend(destAddr, xferFields*dz, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1013,7 +1013,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lx, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag));
 #else
          MPI_Isend(destAddr, xferFields*dx, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1036,7 +1036,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, ly, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag));
 #else
          MPI_Isend(destAddr, xferFields*dy, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1059,7 +1059,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lz, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag));
 #else
          MPI_Isend(destAddr, xferFields*dz, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1082,7 +1082,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lx, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag));
 #else
          MPI_Isend(destAddr, xferFields*dx, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1105,7 +1105,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, ly, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag));
 #else
          MPI_Isend(destAddr, xferFields*dy, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1125,7 +1125,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1145,7 +1145,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1165,7 +1165,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1185,7 +1185,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1205,7 +1205,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1225,7 +1225,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1245,7 +1245,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1265,7 +1265,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag)->get_request());
+         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1276,9 +1276,9 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
    spool.waitall();
 #elif defined(USE_EMPI)
-   #pragma unroll 26
-   for(int i = 0; i< 26; i++){
-      MPI_Wait(spool[i], MPI_STATUS_IGNORE);
+   #pragma unroll
+   for(auto& req : spool){
+      MPI_Wait(req->get_request(), MPI_STATUS_IGNORE);
    }
 #else
    MPI_Waitall(26, domain.sendRequest, status) ;

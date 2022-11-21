@@ -101,7 +101,8 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG != -1)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest){
-			auto event = _request_pool->get_req();
+			//TODO: FIX REQUEST POOL
+			auto event = std::make_shared<async_event>();
 			event->res = MPI_IUsend(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),dest,TAG.value,communicator,event->request.get());
 			return event;
 		  }
@@ -110,7 +111,7 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG != -1)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest, int size){
-			auto event = _request_pool->get_req();
+			auto event = std::make_shared<async_event>();
 			event->res = MPI_IUsend(details::get_underlying_pointer(data), size, details::mpi_type<T>::get_type(),dest,TAG.value,communicator,event->get_request());
 			return event;
 		  }
@@ -118,7 +119,7 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG == NOTAG)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest, Tag tag){
-			auto event = _request_pool->get_req();
+			auto event = std::make_shared<async_event>();
 			event->res = MPI_IUsend(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),dest,tag.value,communicator,event->request.get());
 			return event;
 		  }
@@ -126,7 +127,7 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG == NOTAG)
 		  std::shared_ptr<async_event> Isend(K&& data, int dest, int size, Tag tag){
-			auto event = _request_pool->get_req();
+			auto event = std::make_shared<async_event>();
 			event->res = MPI_IUsend(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),dest,tag.value,communicator,event->request.get());
 			return event;
 		  }
@@ -139,7 +140,7 @@ namespace empi{
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG >= -2)
 		std::shared_ptr<async_event> Irecv(K&& data, int src){
-		  auto event = _request_pool->get_req();
+		  auto event = std::make_shared<async_event>();
 		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),SIZE, details::mpi_type<T>::get_type(),src,TAG.value,communicator,event->request.get());
 
 		  return event;
@@ -148,7 +149,7 @@ namespace empi{
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG >= -2)
 		std::shared_ptr<async_event> Irecv(K&& data, int src, int size){
-		  auto event = _request_pool->get_req();
+		  auto event = std::make_shared<async_event>();
 		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),src,TAG.value,communicator,event->request.get());
 
 		  return event;
@@ -157,7 +158,7 @@ namespace empi{
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG == NOTAG)
 		std::shared_ptr<async_event> Irecv(K&& data, int src, Tag tag){
-		  auto event = _request_pool->get_req();
+		  auto event = std::make_shared<async_event>();
 		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),SIZE, details::mpi_type<T>::get_type(),src,tag.value,communicator,event->request.get());
 
 		  return event;
@@ -166,7 +167,7 @@ namespace empi{
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG == NOTAG)
 		std::shared_ptr<async_event> Irecv(K&& data, int src, int size, Tag tag){
-		  auto event = _request_pool->get_req();
+		  auto event = std::make_shared<async_event>();
 		  event->res = MPI_IUrecv(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),src,tag.value,communicator,event->request.get());
 
 		  return event;
@@ -193,7 +194,7 @@ namespace empi{
 	  template<typename K>
 	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0)
 	  std::shared_ptr<async_event> Ibcast(K&& data, int root){
-		auto event = _request_pool->get_req();
+		auto event = std::make_shared<async_event>();
 		  event->res = MPI_IUbcast(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),root,communicator, event->get_request());
 		return event;
 	  }
@@ -201,7 +202,7 @@ namespace empi{
 	  template<typename K>
 	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE)
 	  std::shared_ptr<async_event> Ibcast(K&& data, int root, int size){
-		auto event = _request_pool->get_req();
+		auto event = std::make_shared<async_event>();
 		event->res = MPI_IUbcast(details::get_underlying_pointer(data), size, details::mpi_type<T>::get_type(),root,communicator, event->get_request());
 		return event;
 	  }
