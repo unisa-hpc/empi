@@ -94,7 +94,7 @@ void f(){
   if (C_rank == 0) {
     u[0] = u[N - 1] = 0;  // boundary condition
     // for (int i = 0; i < N; ++i)
-    //   printf("%g\n", u[i]);
+    //   printf("%g\t%g\n", dx * i, u[i]);
   }
   free(u);
   free(u_old_l);

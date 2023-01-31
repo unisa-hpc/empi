@@ -43,31 +43,24 @@ int main(int argc, char **argv) {
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
           std::array<empi::async_event_p,4> events;
 
-          events[0] = mgh.Irecv(arr, prev, n);
-          events[1] = mgh.Irecv(arr, next, n);
-          events[2] = mgh.Isend(arr, prev, n);
-          events[3] = mgh.Isend(arr, next, n);
+          mgh.Irecv(arr, prev, n);
+          mgh.Irecv(arr, next, n);
+          mgh.Isend(arr, prev, n);
+          mgh.Isend(arr, next, n);
 
-          #pragma unroll
-              for(auto& req : events)
-                req->wait<empi::details::no_status>();
+          mgh.waitall();
           message_group->barrier();
-          
-          
+                    
           if (message_group->rank() == 0)
               t_start = MPI_Wtime();
 
-          
-
           for (auto iter = 0; iter < max_iter; iter++) {
-              events[0] = mgh.Irecv(arr, prev, n);
-              events[1] = mgh.Irecv(arr, next, n);
-              events[2] = mgh.Isend(arr, prev, n);
-              events[3] = mgh.Isend(arr, next, n);
-          
-          #pragma unroll
-              for(auto& req : events)
-                req->wait<empi::details::no_status>();
+              mgh.Irecv(arr, prev, n);
+              mgh.Irecv(arr, next, n);
+              mgh.Isend(arr, prev, n);
+              mgh.Isend(arr, next, n);
+
+              mgh.waitall();
           }
             
           message_group->barrier();
