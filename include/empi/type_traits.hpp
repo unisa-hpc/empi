@@ -19,6 +19,11 @@ struct is_same {
   static constexpr bool value = v1 == v2;
 };
 
+template<size_t size>
+concept has_size = requires {
+  size > 0;
+};
+
 
 template<typename T, T v1, T v2>
 constexpr bool is_greater_v = is_greater<T,v1,v2>::value;

@@ -1,5 +1,5 @@
-#ifndef REQUEST_POOL
-#define REQUEST_POOL
+#ifndef INCLUDE_EMPI_REQUEST_POOL
+#define INCLUDE_EMPI_REQUEST_POOL
 
 #include "empi/async_event.hpp"
 #include "mpi.h"
@@ -22,8 +22,8 @@ public:
   explicit request_pool() : request_pool(default_pool_size) {}
 
   // TODO: clean req before return?
-  std::shared_ptr<async_event> get_req() {
-    auto req = data.at(head);
+  std::shared_ptr<async_event>& get_req() {
+    auto& req = data.at(head);
     head = (head + 1) % data.size();
     if (tail == head && move_tail() == 0) {
       // Expand
@@ -71,4 +71,4 @@ private:
 
 } // namespace empi
 
-#endif /* REQUEST_POOL */
+#endif /* INCLUDE_EMPI_REQUEST_POOL */

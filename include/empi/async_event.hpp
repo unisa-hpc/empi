@@ -2,8 +2,8 @@
 // Created by luigi on 03/10/22.
 //
 
-#ifndef EMPI_PROJECT_INCLUDE_EMPI_ASYNC_EVENT_HPP_
-#define EMPI_PROJECT_INCLUDE_EMPI_ASYNC_EVENT_HPP_
+#ifndef INCLUDE_EMPI_ASYNC_EVENT
+#define INCLUDE_EMPI_ASYNC_EVENT
 
 #include "empi/datatype.hpp"
 #include <memory>
@@ -46,4 +46,4 @@ using async_event_p = std::shared_ptr<empi::async_event>;
 
 }
 
-#endif // EMPI_PROJECT_INCLUDE_EMPI_ASYNC_EVENT_HPP_
+#endif /* INCLUDE_EMPI_ASYNC_EVENT */

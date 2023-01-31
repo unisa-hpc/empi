@@ -5,6 +5,7 @@
 #include <mpi.h>
 #include <cstdio>
 #include <ctime>
+#include <ranges>
 #include <unistd.h>
 #include <empi/empi.hpp>
 
@@ -32,7 +33,6 @@ int main(int argc, char **argv) {
   max_iter = strtol(argv[2], nullptr, 10);
 
   std::vector<value_type> arr(n,0);
-  
   auto ctx = empi::Context(&argc, &argv);
   auto message_group = ctx.create_message_group(MPI_COMM_WORLD);
 
@@ -41,28 +41,31 @@ int main(int argc, char **argv) {
 
   message_group->run(
       [&](empi::MessageGroupHandler<char, empi::Tag{0}, empi::NOSIZE> &mgh) { 
-          empi::async_event_p events[4];
-          // Warmup
-          message_group->barrier();
+          std::array<empi::async_event_p,4> events;
+
           events[0] = mgh.Irecv(arr, prev, n);
           events[1] = mgh.Irecv(arr, next, n);
           events[2] = mgh.Isend(arr, prev, n);
           events[3] = mgh.Isend(arr, next, n);
+
           #pragma unroll
-          for(auto& req : events)
-            req->wait<empi::details::no_status>();
+              for(auto& req : events)
+                req->wait<empi::details::no_status>();
           message_group->barrier();
+          
           
           if (message_group->rank() == 0)
               t_start = MPI_Wtime();
+
+          
 
           for (auto iter = 0; iter < max_iter; iter++) {
               events[0] = mgh.Irecv(arr, prev, n);
               events[1] = mgh.Irecv(arr, next, n);
               events[2] = mgh.Isend(arr, prev, n);
               events[3] = mgh.Isend(arr, next, n);
-              
-              #pragma unroll
+          
+          #pragma unroll
               for(auto& req : events)
                 req->wait<empi::details::no_status>();
           }
