@@ -5,6 +5,7 @@
 #include "mpi.h"
 #include <memory>
 #include <vector>
+#include <iostream>
 
 namespace empi {
 
@@ -45,6 +46,17 @@ public:
     // TODO: Compact request and free memory
   }
 
+  void waitall(){
+    int err;
+    tail = (tail + 1) % data.size();
+    while(tail != head){
+      err = MPI_Wait(data[tail]->get_request(), MPI_STATUS_IGNORE);
+      if(err == MPI_ERR_REQUEST)
+        throw std::runtime_error("Wait on invalid request within request_pool. This should never happen");
+      tail = (tail + 1) % data.size();
+    }
+  }
+
   constexpr static size_t default_pool_size = 1000;
   constexpr static size_t default_windows_size = 2;
 
@@ -53,7 +65,8 @@ private:
   auto move_tail() -> int {
     int flag = 0;
     int mov = 0;
-    while (tail != (head - 1)) {
+    tail = (tail + 1) % data.size();
+    while (tail != head) {
       int err = MPI_Test(data[tail]->get_request(), &flag, MPI_STATUS_IGNORE);
       if (err != MPI_ERR_REQUEST && !flag)
         break;
