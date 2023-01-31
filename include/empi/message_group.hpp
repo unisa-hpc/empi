@@ -312,11 +312,7 @@ namespace empi {
 	}
 
 	void wait_all(){
-	//   for(auto& event : *_request_pool){
-	// 	MPI_Status status;
-	// 	MPI_Wait(event->request.get(),&status);
-	// 	//TODO: how we handle those errors?
-	//   }
+		_request_pool->waitall();
 	}
 
    private:

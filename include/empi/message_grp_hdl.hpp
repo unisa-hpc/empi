@@ -40,6 +40,10 @@ namespace empi{
 			return MPI_Barrier(communicator);
 		}
 
+		void waitall() {
+			_request_pool->waitall();
+		}
+
 		  // -------------- SEND -----------------------------------------
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG != -1)
@@ -101,7 +105,6 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG != -1)
 		  std::shared_ptr<async_event>& Isend(K&& data, int dest){
-			//TODO: FIX REQUEST POOL
 			auto&& event = _request_pool->get_req();
 			event->res = MPI_IUsend(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),dest,TAG.value,communicator,event->request.get());
 			return event;
