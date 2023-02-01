@@ -2,6 +2,9 @@
 #define EMPI_PROJECT_MGH_HPP
 
 #include "mpi.h"
+#include <memory>
+#include <limits>
+
 #include <empi/request_pool.hpp>
 #include <empi/type_traits.hpp>
 #include <empi/tag.hpp>
@@ -11,7 +14,6 @@
 #include <empi/utils.hpp>
 #include <empi/datatype.hpp>
 #include <empi/defines.hpp>
-#include <memory>
 
 namespace empi{
 
@@ -23,13 +25,17 @@ namespace empi{
 
 		public:
 		  explicit MessageGroupHandler(MPI_Comm comm, std::shared_ptr<request_pool> _request_pool) : communicator(comm), _request_pool(_request_pool) {
-			// MPI_Datatype type = details::mpi_type<T>::get_type();
-			// int flag;
-			// MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &max_tag, &flag);
-			// if(!flag){
-			//   max_tag = -1;
-			// }
-			// MPI_Checktype(type); //TODO: exceptions?
+			MPI_Datatype type = details::mpi_type<T>::get_type();
+			int flag;
+			void* value;
+			MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &value, &flag);
+			max_tag = *(int*)value;
+			if(!flag){
+			  max_tag = std::numeric_limits<int>::max();
+			}
+			MPI_Checktype(type);
+			if constexpr (TAG != NOTAG)
+				details::checktag<details::mpi_function::all>(TAG.value, max_tag);
 		  }
 
 		  MessageGroupHandler(const MessageGroupHandler& chg) = default;
@@ -55,6 +61,7 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG == NOTAG)
 		  int send(K&& data, int dest, Tag tag){
+			details::checktag<details::mpi_function::send>(tag.value, max_tag);
 			return EMPI_SEND(details::get_underlying_pointer(data), SIZE,  details::mpi_type<T>::get_type(), dest, tag.value, communicator);
 		  }
 
@@ -67,6 +74,7 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG == NOTAG)
 		  int send(K&& data, int dest, size_t size, Tag tag){
+			details::checktag<details::mpi_function::send>(tag.value, max_tag);
 			return EMPI_SEND(details::get_underlying_pointer(data), size,  details::mpi_type<T>::get_type(), dest, tag.value, communicator);
 		  }
 
@@ -90,12 +98,14 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG == NOTAG)
 		  int recv(K&& data, int src, Tag tag, MPI_Status& status){
+			details::checktag<details::mpi_function::recv>(tag.value, max_tag);
 			return EMPI_RECV(details::get_underlying_pointer(data), SIZE,  details::mpi_type<T>::get_type(), src, tag.value, communicator, &status);
 		  }
 
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG == NOTAG)
 		  int recv(K&& data, int src, size_t size, Tag tag, MPI_Status& status){
+			details::checktag<details::mpi_function::recv>(tag.value, max_tag);
 			return EMPI_RECV(details::get_underlying_pointer(data), size,  details::mpi_type<T>::get_type(), src, tag.value, communicator, &status);
 		  }
 
@@ -123,6 +133,7 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG == NOTAG)
 		  std::shared_ptr<async_event>& Isend(K&& data, int dest, Tag tag){
+			details::checktag<details::mpi_function::isend>(tag.value, max_tag);
 			auto&& event = _request_pool->get_req();
 			event->res = EMPI_ISEND(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),dest,tag.value,communicator,event->request.get());
 			return event;
@@ -131,6 +142,7 @@ namespace empi{
 		  template<typename K>
 		  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG == NOTAG)
 		  std::shared_ptr<async_event>& Isend(K&& data, int dest, int size, Tag tag){
+			details::checktag<details::mpi_function::isend>(tag.value, max_tag);
 			auto&& event = _request_pool->get_req();
 			event->res = EMPI_ISEND(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),dest,tag.value,communicator,event->request.get());
 			return event;
@@ -162,6 +174,7 @@ namespace empi{
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0) && (TAG == NOTAG)
 		std::shared_ptr<async_event>& Irecv(K&& data, int src, Tag tag){
+		  details::checktag<details::mpi_function::irecv>(tag.value, max_tag);
 		  auto&& event = _request_pool->get_req();
 		  event->res = EMPI_IRECV(details::get_underlying_pointer(data),SIZE, details::mpi_type<T>::get_type(),src,tag.value,communicator,event->request.get());
 
@@ -171,6 +184,7 @@ namespace empi{
 		template<typename K>
 		requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE) && (TAG == NOTAG)
 		std::shared_ptr<async_event>& Irecv(K&& data, int src, int size, Tag tag){
+		  details::checktag<details::mpi_function::irecv>(tag.value, max_tag);
 		  auto&& event = _request_pool->get_req();
 		  event->res = EMPI_IRECV(details::get_underlying_pointer(data),size, details::mpi_type<T>::get_type(),src,tag.value,communicator,event->request.get());
 
@@ -183,13 +197,13 @@ namespace empi{
 	  template<typename K>
 	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0)
 	  int Bcast(K&& data, int root){
-		return EMPI_BCAST(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),root,communicator);
+		return EMPI_BCAST(details::get_underlying_pointer(std::forward<K>(data)), SIZE, details::mpi_type<T>::get_type(),root,communicator);
 	  }
 
 	  template<typename K>
 	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE == NOSIZE)
 	  int Bcast(K&& data, int root, int size){
-		return EMPI_BCAST(details::get_underlying_pointer(data), size, details::mpi_type<T>::get_type(),root,communicator);
+		return EMPI_BCAST(details::get_underlying_pointer(std::forward<K>(data)), size, details::mpi_type<T>::get_type(),root,communicator);
 	  }
 
 	  // ------------------------- END BCAST --------------------------
@@ -199,7 +213,7 @@ namespace empi{
 	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>) && (SIZE > 0)
 	  std::shared_ptr<async_event>& Ibcast(K&& data, int root){
 		auto&& event = _request_pool->get_req();
-		  event->res = EMPI_IBCAST(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),root,communicator, event->get_request());
+		event->res = EMPI_IBCAST(details::get_underlying_pointer(data), SIZE, details::mpi_type<T>::get_type(),root,communicator, event->get_request());
 		return event;
 	  }
 
@@ -228,7 +242,6 @@ namespace empi{
 
 	  // ------------------------- END ALLREDUCE --------------------------
 	  // ------------------------- GATHERV --------------------------
-	//TODO: implement UGather
 	template<typename K>
 	  requires (is_valid_container<T,K> || is_valid_pointer<T,K>)
 	  int gatherv(int root, K&& sendbuf,int sendcount, K&& recvbuf, int* recvcounts, int* displacements){
