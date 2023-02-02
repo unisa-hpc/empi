@@ -8,7 +8,7 @@
 #include <empi/request_pool.hpp>
 #include <empi/type_traits.hpp>
 #include <empi/tag.hpp>
-#include <empi/empi_defines.hpp>
+
 #include <empi/request.hpp>
 #include <empi/async_event.hpp>
 #include <empi/utils.hpp>

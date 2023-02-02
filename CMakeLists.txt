@@ -20,7 +20,6 @@ set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/utils.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/request_pool.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/empi_defines.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/request.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/async_event.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/datatype.hpp

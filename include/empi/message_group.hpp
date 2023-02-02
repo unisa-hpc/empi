@@ -14,7 +14,7 @@
 #include <empi/tag.hpp>
 #include <empi/utils.hpp>
 #include <empi/type_traits.hpp>
-#include <empi/empi_defines.hpp>
+
 
 namespace empi {
   class MessageGroup {

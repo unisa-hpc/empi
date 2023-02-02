@@ -24,7 +24,6 @@ public:
 
   explicit request_pool() : request_pool(default_pool_size) {}
 
-  // TODO: clean req before return?
   std::shared_ptr<async_event>& get_req() {
     auto& req = data.at(head);
     head = (head + 1) % data.size();
@@ -33,7 +32,7 @@ public:
       std::cout << "........ EXPANDING ........\n"; 
       const size_t old_size = data.size();
       const auto new_size = base_size * window;
-      data.resize(new_size); // TODO: Maybe reserve will be more optimized
+      data.resize(new_size);
       window = window << 2;
       auto &&end = data.begin() + static_cast<long>(new_size);
       for (auto &&iter = data.begin() + static_cast<long>(old_size);
@@ -43,10 +42,6 @@ public:
       tail = new_size;
     }
     return req;
-  }
-
-  auto compact() -> void {
-    // TODO: Compact request and free memory
   }
 
   void waitall(){

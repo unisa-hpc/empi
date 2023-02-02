@@ -22,6 +22,9 @@
 #endif
 
 namespace empi{
+
+	constexpr int NOSIZE = 0;
+
 	namespace details{
 		enum mpi_function{
 			send = 1,
