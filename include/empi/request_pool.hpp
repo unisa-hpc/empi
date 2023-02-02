@@ -10,11 +10,12 @@
 
 namespace empi {
 
-// TODO:
 class request_pool {
 public:
   explicit request_pool(size_t size)
-      : data(size), window(default_windows_size) {
+      : data(size), 
+        base_size(size),
+        window(default_windows_size) { 
     for (auto &req : data)
       req = std::make_shared<async_event>();
     head = 0;
@@ -29,8 +30,9 @@ public:
     head = (head + 1) % data.size();
     if (tail == head && move_tail() == 0) {
       // Expand
+      std::cout << "........ EXPANDING ........\n"; 
       const size_t old_size = data.size();
-      const auto new_size = default_pool_size * window;
+      const auto new_size = base_size * window;
       data.resize(new_size); // TODO: Maybe reserve will be more optimized
       window = window << 2;
       auto &&end = data.begin() + static_cast<long>(new_size);
@@ -89,6 +91,7 @@ private:
   size_t head;
   size_t tail;
   size_t window;
+  size_t base_size;
 };
 
 } // namespace empi
