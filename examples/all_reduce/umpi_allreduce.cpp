@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 #include <chrono>
+#include <cstddef>
+#include <cstdlib>
 #include <iostream>
 #include <iterator>
 #include <malloc.h>
@@ -8,63 +10,43 @@
 #include <time.h>
 #include <unistd.h>
 
-/**
-A simple ping pong test that iterates many times to measure communication time
-between 2 nodes HOW TO RUN: mpirun -n num_procs (2 in this example) a.out
-nBytes(size of data in bytes) max_iter(how many times does it itarate?)
-sleep_time(sleep time between iterations)
-**/
 using namespace std;
+using value_type = int;
 
 double Mean(double[], int);
 double Median(double[], int);
 void Print_times(double[], int);
 
 int main(int argc, char **argv) {
-  int myid, procs, n, err, max_iter, nBytes, sleep_time, iter = 0, range = 100,
-                                                         pow_2;
-  double t_start, t_end;
+  int myid, procs, n, err, max_iter, nBytes, sleep_time, range = 100, pow_2;
+  double t_start, t_end, t_start_inner;
   constexpr int SCALE = 1000000;
-  int *arr, *recarr;
 
-  MPI_Status status;
-  err = MPI_Init(&argc, &argv);
-  if (err != MPI_SUCCESS) {
-    cout << "\nError initializing MPI. \narg1: size of Data in Bytes, arg2: "
-            "number of iterations, arg3: sleep time between iterations, arg4: "
-            "name (ip) of second node\n";
-    MPI_Abort(MPI_COMM_WORLD, err);
-  }
-
-  MPI_Comm_size(MPI_COMM_WORLD, &procs);
+  MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 
-  pow_2 = atoi(argv[1]);
-  max_iter = atoi(argv[2]);
+  // ------ PARAMETER SETUP -----------
+  pow_2 =    static_cast<int>(strtol(argv[1],nullptr,10));
+  max_iter = static_cast<int>(strtol(argv[2],nullptr,10));
 
-  double mpi_time;
-  n = pow(2, pow_2);
+  double mpi_time = 0.0;
+  nBytes = std::pow(2, pow_2);
+  n = nBytes;
 
-  const int num_elements = n / sizeof(int);
-  arr = new int[num_elements];
-  recarr = new int[num_elements];
-
-  if (myid == 0) {
-    for (int j = 0; j < num_elements; j++)
-      arr[j] = 0;
-  }
+  std::vector<value_type> arr(n, 0);
+  std::vector<value_type> dest(n, 0);
 
   // Warmup
   MPI_Barrier(MPI_COMM_WORLD);
-  MPI_UAllreduce(arr, recarr, num_elements, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(arr.data(), dest.data(), n, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
   MPI_Barrier(MPI_COMM_WORLD);
 
   // main measurement
   if (myid == 0)
     t_start = MPI_Wtime();
 
-  while (iter < max_iter) {
-    MPI_UAllreduce(arr, recarr, num_elements, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+  for(auto iter = 0; iter < max_iter; iter++){
+    MPI_UAllreduce(arr.data(), dest.data(), n, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
     iter++;
   }
 
@@ -85,7 +67,6 @@ int main(int argc, char **argv) {
     //      << "\n";
     // Print_times(mpi_time, num_restart);
   }
-  free(arr);
   MPI_Finalize();
   return 0;
 } // end main
