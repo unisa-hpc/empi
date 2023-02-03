@@ -44,31 +44,29 @@ def cmdline_args():
     return(p.parse_args())
 
 
-def run_experiment(args,exp_name):
+def run_experiment(args,exp_name,run_command):
     print(f"//==----------{exp_name}----------==//")
     time_sum = 0.0
     newline="\n" #f-string limitation bypass
     for i in range(0,args.app_restart,1):
         print(f'{i+1}..{newline if i==(args.app_restart-1) else ""}',end='',flush=True)
-        res = command.run([
-            f'{args.ompi_path}bin/mpirun',
-            f'{"--allow-run-as-root" if args.root else ""}',
-            '-n',
-            f'{args.num_proc}',
-            f'{args.bench_path}{exp_name}', #App name
-            f'{args.size}',
-            f'{args.app_iter}'
-        ])
-        # print(res.output)
+        res = command.run(run_command)
         time_sum += float(res.output)
     print(f"Aggregated time: {time_sum}")
     print(f"Mean: {time_sum/args.app_restart}")
     command.run(["sleep","1"]) #Wait
     print("-----------------------------------------------")
+    
+def make_minibench_command(args, exp_path):
+	return [
+		f'{args.ompi_path}bin/mpirun',
+		f'{"--allow-run-as-root" if args.root else ""}',
+		'-n',
+		f'{args.num_proc}',
+		f'{args.bench_path}{exp_path}',  # App name
+		f'{args.size}',
+		f'{args.app_iter}'
+]
 
-if __name__ == '__main__':
-    args = cmdline_args()
-    print(args)
-    run_experiment(args,"ping_pong/mpi_ping_pong")
-
-    print()
+def make_lulesh_command(args, exp_path):
+    

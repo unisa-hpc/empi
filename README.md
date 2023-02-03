@@ -3,7 +3,28 @@ EMPI is a C++ library that aims to enhance the MPI programming model's interface
 
 ## Requirements
 EMPI is written in C++20, so a valid C++20 compiler is required (e.g. gcc 12). The building system is Cmake, with version 3.0 as the minimun requirement.
-EMPI is shipped with a customized OpenMPI implementation, which is required to exploit the best performance. However, EMPI works with a vanilla OpenMPI as well in case you don't want to compile OpenMPI on your own. To do that, disable the unchecked function in the CMake configuring phase with the flag `-DENABLE_UNCHECKED_FUNCTION=OFF`.
+EMPI is shipped with a customized OpenMPI implementation, which is required to exploit the best performance. However, EMPI works with a vanilla OpenMPI as well in case you don't want to compile OpenMPI on your own. To do that, disable the unchecked function in the CMake configuring phase when building yout application with the flag `-DENABLE_UNCHECKED_FUNCTION=OFF`.  
+The benchmark scripts are written in python 3.8.10, with the following dependencies
+
+- Command  
+
+In the `script/` folder a python virtual environment with all the dependencies is placed in the folder `venv`. To activate it, type in the terminal `scripts/venv/bin/activate`.  
+
+## Build OpenMPI
+
+### Requirements
+- gcc 
+- make
+- m4 1.4.19
+- autoconf 2.69
+- automake 1.16.1
+- libtool 2.4.6
+
+
+
+
+
+
 
 
 
