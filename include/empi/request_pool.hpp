@@ -29,7 +29,6 @@ public:
     head = (head + 1) % data.size();
     if (tail == head && move_tail() == 0) {
       // Expand
-      std::cout << "........ EXPANDING ........\n"; 
       const size_t old_size = data.size();
       const auto new_size = base_size * window;
       data.resize(new_size);
