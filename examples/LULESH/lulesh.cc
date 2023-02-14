@@ -1104,7 +1104,11 @@ void CalcVolumeForceForElems(Domain& domain)
 
 /******************************************/
 
+#if defined (USE_EMPI)
+static inline void CalcForceForNodes(Domain& domain, std::unique_ptr<empi::MessageGroup>& comm_world)
+#else
 static inline void CalcForceForNodes(Domain& domain)
+#endif
 {
   Index_t numNode = domain.numNode() ;
 
@@ -1125,7 +1129,7 @@ static inline void CalcForceForNodes(Domain& domain)
 #elif defined(USE_EMPI)
   CommRecv(domain, MSG_COMM_SBN, 3,
            domain.sizeX() + 1, domain.sizeY() + 1, domain.sizeZ() + 1,
-           true, false, rpool) ;
+           true, false, rpool, comm_world) ;
 #else
   CommRecv(domain, MSG_COMM_SBN, 3,
            domain.sizeX() + 1, domain.sizeY() + 1, domain.sizeZ() + 1,
@@ -1151,11 +1155,11 @@ static inline void CalcForceForNodes(Domain& domain)
   
   CommSend(domain, MSG_COMM_SBN, 3, fieldData,
            domain.sizeX() + 1, domain.sizeY() + 1, domain.sizeZ() +  1,
-           true, false) ;
+           true, false, comm_world) ;
 #if defined(USE_MPL_CXX)
   CommSBN(domain, 3, fieldData, rpool) ;
 #elif defined(USE_EMPI)
-  CommSBN(domain, 3, fieldData, rpool) ;
+  CommSBN(domain, 3, fieldData, rpool, comm_world) ;
 #else
   CommSBN(domain, 3, fieldData) ;
 #endif  
@@ -1247,9 +1251,11 @@ void CalcPositionForNodes(Domain &domain, const Real_t dt, Index_t numNode)
 }
 
 /******************************************/
-
-static inline
-void LagrangeNodal(Domain& domain)
+#if defined (USE_EMPI)
+   static inline void LagrangeNodal(Domain& domain, std::unique_ptr<empi::MessageGroup>& comm_world)
+#else
+   static inline void LagrangeNodal(Domain& domain)
+#endif
 {
 #ifdef SEDOV_SYNC_POS_VEL_EARLY
    Domain_member fieldData[6] ;
@@ -1260,7 +1266,7 @@ void LagrangeNodal(Domain& domain)
 
   /* time of boundary condition evaluation is beginning of step for force and
    * acceleration boundary conditions. */
-  CalcForceForNodes(domain);
+  CalcForceForNodes(domain, comm_world);
 
 #if defined(USE_MPI) && USE_MPI == 1
 #if defined(USE_MPL_CXX)
@@ -1279,7 +1285,7 @@ void LagrangeNodal(Domain& domain)
 #elif defined(USE_EMPI)
    CommRecv(domain, MSG_SYNC_POS_VEL, 6,
             domain.sizeX() + 1, domain.sizeY() + 1, domain.sizeZ() + 1,
-            false, false, rpool) ;
+            false, false, rpool, comm_world) ;
 #else
    CommRecv(domain, MSG_SYNC_POS_VEL, 6,
             domain.sizeX() + 1, domain.sizeY() + 1, domain.sizeZ() + 1,
@@ -1304,13 +1310,19 @@ void LagrangeNodal(Domain& domain)
   fieldData[4] = &Domain::yd ;
   fieldData[5] = &Domain::zd ;
 
+#if defined (USE_EMPI)
+   CommSend(domain, MSG_SYNC_POS_VEL, 6, fieldData,
+            domain.sizeX() + 1, domain.sizeY() + 1, domain.sizeZ() + 1,
+            false, false, comm_world) ;
+#else
    CommSend(domain, MSG_SYNC_POS_VEL, 6, fieldData,
             domain.sizeX() + 1, domain.sizeY() + 1, domain.sizeZ() + 1,
             false, false) ;
+#endif
 #if defined(USE_MPL_CXX)
    CommSyncPosVel(domain, rpool) ;
 #elif defined(USE_EMPI)
-   CommSyncPosVel(domain, rpool) ;
+   CommSyncPosVel(domain, rpool, comm_world) ;
 #else
    CommSyncPosVel(domain) ;
 #endif
@@ -1993,9 +2005,11 @@ void CalcMonotonicQForElems(Domain& domain)
 }
 
 /******************************************/
-
-static inline
-void CalcQForElems(Domain& domain)
+#if defined (USE_EMPI)
+static inline void CalcQForElems(Domain& domain, std::unique_ptr<empi::MessageGroup>& comm_world)
+#else
+static inline void CalcQForElems(Domain& domain)
+#endif
 {
    //
    // MONOTONIC Q option
@@ -2026,7 +2040,7 @@ void CalcQForElems(Domain& domain)
 #elif defined(USE_EMPI)
       CommRecv(domain, MSG_MONOQ, 3,
                domain.sizeX(), domain.sizeY(), domain.sizeZ(),
-               true, true, rpool) ;
+               true, true, rpool, comm_world) ;
 #else
       CommRecv(domain, MSG_MONOQ, 3,
                domain.sizeX(), domain.sizeY(), domain.sizeZ(),
@@ -2047,14 +2061,20 @@ void CalcQForElems(Domain& domain)
       fieldData[1] = &Domain::delv_eta ;
       fieldData[2] = &Domain::delv_zeta ;
 
+      #if defined(USE_EMPI)
+      CommSend(domain, MSG_MONOQ, 3, fieldData,
+               domain.sizeX(), domain.sizeY(), domain.sizeZ(),
+               true, true, comm_world) ;
+      #else
       CommSend(domain, MSG_MONOQ, 3, fieldData,
                domain.sizeX(), domain.sizeY(), domain.sizeZ(),
                true, true) ;
+      #endif
 
 #if defined(USE_MPL_CXX)
       CommMonoQ(domain, rpool);
 #elif defined(USE_EMPI)
-      CommMonoQ(domain, rpool) ;
+      CommMonoQ(domain, rpool, comm_world) ;
 #else
       CommMonoQ(domain) ;
 #endif      
@@ -2503,13 +2523,16 @@ void UpdateVolumesForElems(Domain &domain,
 
 /******************************************/
 
-static inline
-void LagrangeElements(Domain& domain, Index_t numElem)
+#if defined (USE_EMPI)
+static inline void LagrangeElements(Domain& domain, Index_t numElem, std::unique_ptr<empi::MessageGroup>& comm_world)
+#else
+static inline void LagrangeElements(Domain& domain, Index_t numElem)
+#endif
 {
   CalcLagrangeElements(domain) ;
 
   /* Calculate Q.  (Monotonic q option requires communication) */
-  CalcQForElems(domain) ;
+  CalcQForElems(domain, comm_world) ;
 
   ApplyMaterialPropertiesForElems(domain) ;
 
@@ -2672,8 +2695,11 @@ void CalcTimeConstraintsForElems(Domain& domain) {
 
 /******************************************/
 
-static inline
-void LagrangeLeapFrog(Domain& domain)
+#if defined (USE_EMPI)
+static inline void LagrangeLeapFrog(Domain& domain, std::unique_ptr<empi::MessageGroup>& comm_world)
+#else
+static inline void LagrangeLeapFrog(Domain& domain)
+#endif
 {
 #ifdef SEDOV_SYNC_POS_VEL_LATE
    Domain_member fieldData[6] ;
@@ -2681,14 +2707,14 @@ void LagrangeLeapFrog(Domain& domain)
 
    /* calculate nodal forces, accelerations, velocities, positions, with
     * applied boundary conditions and slide surface considerations */
-   LagrangeNodal(domain);
+   LagrangeNodal(domain, comm_world);
 
 #ifdef SEDOV_SYNC_POS_VEL_LATE
 #endif
 
    /* calculate element quantities (i.e. velocity gradient & q), and update
     * material states */
-   LagrangeElements(domain, domain.numElem());
+   LagrangeElements(domain, domain.numElem(), comm_world);
 
 #if defined(USE_MPI) && USE_MPI == 1
 #if defined(USE_MPL_CXX)
@@ -2743,11 +2769,15 @@ void LagrangeLeapFrog(Domain& domain)
 #endif   
 }
 
+// void get_context(){
+//    static empi::Context(MPI_COMM_WORLD);
+
+// }
 
 /******************************************/
 // Declare comm_world
 #ifdef USE_EMPI
-std::unique_ptr<empi::MessageGroup> comm_world_s::comm_world = nullptr;
+std::unique_ptr<empi::MessageGroup> comm_world = nullptr;
 #endif
 
 int main(int argc, char *argv[])
@@ -2766,8 +2796,8 @@ int main(int argc, char *argv[])
 #if defined(USE_MPL_CXX)
    const mpl::communicator &comm_world(mpl::environment::comm_world());
 #elif defined(USE_EMPI)
-   empi::Context ctx{&argc,&argv};
-   comm_world_s::comm_world = ctx.create_message_group(MPI_COMM_WORLD);
+   static empi::Context ctx{&argc,&argv};
+   auto comm_world = ctx.create_message_group(MPI_COMM_WORLD);
    
 #else
    MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &thread_support);
@@ -2792,8 +2822,8 @@ int main(int argc, char *argv[])
    numRanks = comm_world.size();
    myRank = comm_world.rank();
 #elif defined(USE_EMPI)
-   numRanks = comm_world_s::comm_world->size();
-   myRank =   comm_world_s::comm_world->rank();
+   numRanks = comm_world->size();
+   myRank =   comm_world->rank();
 #else   
    MPI_Comm_size(MPI_COMM_WORLD, &numRanks) ;
    MPI_Comm_rank(MPI_COMM_WORLD, &myRank) ;
@@ -2860,19 +2890,25 @@ int main(int argc, char *argv[])
 #elif defined(USE_EMPI)
    CommRecv(*locDom, MSG_COMM_SBN, 1,
             locDom->sizeX() + 1, locDom->sizeY() + 1, locDom->sizeZ() + 1,
-            true, false, rpool) ;
+            true, false, rpool, comm_world) ;
 #else
    CommRecv(*locDom, MSG_COMM_SBN, 1,
             locDom->sizeX() + 1, locDom->sizeY() + 1, locDom->sizeZ() + 1,
             true, false) ;
-#endif   
+#endif  
+#if defined(USE_EMPI)
    CommSend(*locDom, MSG_COMM_SBN, 1, &fieldData,
             locDom->sizeX() + 1, locDom->sizeY() + 1, locDom->sizeZ() +  1,
-            true, false) ;
+            true, false, comm_world) ;
+#else
+   CommSend(*locDom, MSG_COMM_SBN, 1, &fieldData,
+               locDom->sizeX() + 1, locDom->sizeY() + 1, locDom->sizeZ() +  1,
+               true, false) ;
+#endif
 #if defined(USE_MPL_CXX)
    CommSBN(*locDom, 1, &fieldData, rpool) ;
 #elif defined(USE_EMPI)
-   CommSBN(*locDom, 1, &fieldData, rpool) ;
+   CommSBN(*locDom, 1, &fieldData, rpool, comm_world) ;
 #else
    CommSBN(*locDom, 1, &fieldData) ;
 #endif
@@ -2893,7 +2929,7 @@ int main(int argc, char *argv[])
    while((locDom->time() < locDom->stoptime()) && (locDom->cycle() < opts.its)) {
 
       TimeIncrement(*locDom) ;
-      LagrangeLeapFrog(*locDom) ;
+      LagrangeLeapFrog(*locDom, comm_world) ;
 
       if ((opts.showProg != 0) && (opts.quiet == 0) && (myRank == 0)) {
          std::cout << "cycle = " << locDom->cycle()       << ", "
@@ -2932,13 +2968,16 @@ int main(int argc, char *argv[])
 
    delete locDom; 
 
+#if defined(USE_EMPI)
+
+#endif
+
 #if USE_MPI
 #if defined(USE_MPL_CXX) || defined(USE_EMPI)
 #else 
    MPI_Finalize() ;
 #endif
 #endif
-
    return 0 ;
 }
 
