@@ -20,7 +20,7 @@ namespace empi {
   class MessageGroup {
    public:
 	explicit MessageGroup(MPI_Comm comm, size_t pool_size = request_pool::default_pool_size) : comm(comm) {
-	  MPI_Checkcomm(comm); //TODO: exception?
+	   EMPI_CHECKCOMM(comm); //TODO: exception?
 	   MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
 	   MPI_Comm_size(MPI_COMM_WORLD, &_size);
 	   _next = (_rank + 1) % _size;

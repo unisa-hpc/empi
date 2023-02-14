@@ -29,7 +29,7 @@ namespace empi{
 			// if(!flag){
 			//   max_tag = -1;
 			// }
-			// MPI_Checktype(type); //TODO: exceptions?
+			// EMPI_CHECKTYPE(type); //TODO: exceptions?
 		  }
 
 		  MessageGroupHandler(const MessageGroupHandler& chg) = default;
