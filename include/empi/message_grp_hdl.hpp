@@ -25,17 +25,13 @@ namespace empi{
 
 		public:
 		  explicit MessageGroupHandler(MPI_Comm comm, std::shared_ptr<request_pool> _request_pool) : communicator(comm), _request_pool(_request_pool) {
-			MPI_Datatype type = details::mpi_type<T>::get_type();
-			int flag;
-			void* value;
-			MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &value, &flag);
-			max_tag = *(int*)value;
-			if(!flag){
-			  max_tag = std::numeric_limits<int>::max();
-			}
-			MPI_Checktype(type);
-			if constexpr (TAG != NOTAG)
-				details::checktag<details::mpi_function::all>(TAG.value, max_tag);
+			// MPI_Datatype type = details::mpi_type<T>::get_type();
+			// int flag;
+			// MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_TAG_UB, &max_tag, &flag);
+			// if(!flag){
+			//   max_tag = -1;
+			// }
+			// EMPI_CHECKTYPE(type); //TODO: exceptions?
 		  }
 
 		  MessageGroupHandler(const MessageGroupHandler& chg) = default;
