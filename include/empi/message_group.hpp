@@ -14,13 +14,13 @@
 #include <empi/tag.hpp>
 #include <empi/utils.hpp>
 #include <empi/type_traits.hpp>
-#include <empi/empi_defines.hpp>
+
 
 namespace empi {
   class MessageGroup {
    public:
 	explicit MessageGroup(MPI_Comm comm, size_t pool_size = request_pool::default_pool_size) : comm(comm) {
-	  MPI_Checkcomm(comm); //TODO: exception?
+	  MPI_Checkcomm(comm);
 	   MPI_Comm_rank(MPI_COMM_WORLD, &_rank);
 	   MPI_Comm_size(MPI_COMM_WORLD, &_size);
 	   _next = (_rank + 1) % _size;
@@ -223,11 +223,11 @@ namespace empi {
 	int Bcast(T&& data, int root){
 	  if constexpr (has_data<T>) {
 		MessageGroupHandler<typename T::value_type, NOTAG, size> h(comm, _request_pool);
-		return h.template Bcast(data, root);
+		return h.template Bcast(std::forward<T>(data), root);
 	  }
 	  else{
 		MessageGroupHandler<T, NOTAG, size> h(comm, _request_pool);
-		return h.template Bcast(data, root);
+		return h.template Bcast(std::forward<T>(data), root);
 	  }
 	}
 
@@ -235,11 +235,11 @@ namespace empi {
 	int Bcast(T&& data, int root, int size){
 	  if constexpr (has_data<T>) {
 		MessageGroupHandler<typename T::value_type, NOTAG, NOSIZE> h(comm, _request_pool);
-		return h.template Bcast(data, root, size);
+		return h.template Bcast(std::forward<T>(data), root, size);
 	  }
 	  else{
 		MessageGroupHandler<T, NOTAG, NOSIZE> h(comm, _request_pool);
-		return h.template Bcast(data, root, size);
+		return h.template Bcast(std::forward<T>(data), root, size);
 	  }
 	}
 
@@ -282,7 +282,7 @@ namespace empi {
 	template<typename T>
 	int Allreduce(T&& sendbuf, T&& recvbuf, int size, MPI_Op op){
 	  MessageGroupHandler<typename get_true_type<T>::type , NOTAG, NOSIZE> h(comm, _request_pool);
-	  return h.template Allreduce(sendbuf,recvbuf,size,op);
+	  return h.template Allreduce(std::forward<T>(sendbuf),std::forward<T>(recvbuf),size,op);
 	}
 	// ------------------ END ALLREDUCE -----------------------------
 	// ------------------ GATHERV -----------------------------

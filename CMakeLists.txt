@@ -7,8 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 include(FindMPI REQUIRED)
 
 option(ENABLE_UNCHECKED_FUNCTION "enable unchecked function (requires custom OMPI)" ON)
-option(MPI_EXAMPLES "Enable MPI examples" OFF)
-option(BUILD_MPL "Build MPL" OFF)
+option(BUILD_EXAMPLES "Build Examples" OFF)
 option(ENABLE_TESTS "Enable testing" OFF)
 
 set(header_files
@@ -20,7 +19,6 @@ set(header_files
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/utils.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/message_group.hpp 
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/request_pool.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/empi_defines.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/request.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/async_event.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/include/empi/datatype.hpp
@@ -59,17 +57,19 @@ if(ENABLE_TESTS)
 	add_subdirectory(test)
 endif()
 
-if(BUILD_MPL)
-	add_subdirectory(lib/mpl-subset)
+if(BUILD_EXAMPLES)
+	add_subdirectory(examples)
 endif()
-
-add_subdirectory(examples)
 
 message("//===---------------------------------------===//")
 message("//           CONFIGURATION SUMMARY             //")
 message("//===---------------------------------------===//")
 message("-> ENABLE_UNCHECKED_FUNCTION:........ ${ENABLE_UNCHECKED_FUNCTION}")
-message("-> BUILD_MPL:........................ ${BUILD_MPL}")
-message("-> MPI_EXAMPLES:..................... ${MPI_EXAMPLES}")
+message("-> BUILD_EXAMPLES:................... ${BUILD_EXAMPLES}")
+if(BUILD_EXAMPLES)
+message("-> BUILD_MPI_EXAMPLES:............... ${BUILD_MPI_EXAMPLES}")
+message("-> BUILD_UMPI_EXAMPLES:.............. ${BUILD_EXAMPLES}")
+message("-> BUILD_MPL_EXAMPLES:............... ${BUILD_MPL_EXAMPLES}")
+endif()
 message("-> ENABLE_TESTS:..................... ${ENABLE_TESTS}")
 message("//===---------------------------------------===//")
