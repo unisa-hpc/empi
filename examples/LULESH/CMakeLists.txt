@@ -8,6 +8,7 @@ option(WITH_OPENMP "Build LULESH with OpenMP"       TRUE)
 option(WITH_SILO   "Build LULESH with silo support" FALSE)
 option(USE_MPL  "BUILD LULESH with MPL"  FALSE)
 option(USE_EMPI  "BUILD LULESH with MPL"  FALSE)
+set(EMPI_PATH "../../include" CACHE STRING "PATH TO EMPI")
 
 set(LULESH_SOURCES
   lulesh-comm.cc
@@ -17,6 +18,10 @@ set(LULESH_SOURCES
   lulesh.cc)
 
 set(LULESH_EXEC lulesh2.0)
+
+if(USE_EMPI)
+  set(CMAKE_CXX_STANDARD 20)
+endif()
 
 add_executable(${LULESH_EXEC} ${LULESH_SOURCES})
 
@@ -33,14 +38,12 @@ endif()
 endif()
 
 if(USE_MPL)
-  target_include_directories(${LULESH_EXEC} PUBLIC "/root/empi/lib/mpl-subset")
   target_compile_definitions(${LULESH_EXEC} PUBLIC "-DUSE_MPL_CXX=1")
 endif()
 
 if(USE_EMPI)
-  target_include_directories(${LULESH_EXEC} PUBLIC "/root/empi/include/")
+  target_include_directories(${LULESH_EXEC} PUBLIC "${EMPI_PATH}")
   target_compile_definitions(${LULESH_EXEC} PUBLIC "-DUSE_EMPI=1")
-  list(APPEND LULESH_EXTERNAL_LIBS empi)
 endif()
 
 else()

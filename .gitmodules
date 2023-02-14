@@ -2,6 +2,3 @@
 	path = lib/Catch2
 	url = https://github.com/catchorg/Catch2
 	branch = v2.x
-[submodule "lib/mpl-subset"]
-	path = lib/mpl-subset
-	url = https://github.com/mpi-advance/mpl-subset

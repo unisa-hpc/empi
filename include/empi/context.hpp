@@ -24,6 +24,7 @@ namespace empi{
         Context(Context&& c) = default;
 
         ~Context(){
+            MPI_Barrier(MPI_COMM_WORLD);
             MPI_Finalize();
         }
 

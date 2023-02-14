@@ -5,8 +5,6 @@
 #ifndef EMPI_PROJECT_INCLUDE_EMPI_REQUEST_HPP_
 #define EMPI_PROJECT_INCLUDE_EMPI_REQUEST_HPP_
 
-#include <empi/empi_defines.hpp>
-
 namespace empi {
 
 	struct Request {

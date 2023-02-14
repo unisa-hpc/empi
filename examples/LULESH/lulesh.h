@@ -14,14 +14,18 @@
 
 #include <empi/empi.hpp>
 
-struct comm_world_s{
+// struct comm_world_s{
 
-      static void init(empi::Context& ctx){
-         comm_world = std::move(ctx.create_message_group(MPI_COMM_WORLD));
-      }
+//       static void init(empi::Context& ctx){
+//          comm_world = std::move(ctx.create_message_group(MPI_COMM_WORLD));
+//       }
 
-      static std::unique_ptr<empi::MessageGroup> comm_world;
-};
+//       static ~comm_world_s(){
+
+//       }
+
+//       static std::unique_ptr<std::unique_ptr<empi::MessageGroup>> comm_world;
+// };
 
 #endif
 
@@ -656,13 +660,22 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
 void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData, std::vector<mpl::irequest>& rpool);
 void CommSyncPosVel(Domain& domain, std::vector<mpl::irequest>& rpool);
 void CommMonoQ(Domain& domain, std::vector<mpl::irequest>& rpool);
+void CommSend(Domain& domain, Int_t msgType,
+              Index_t xferFields, Domain_member *fieldData,
+              Index_t dx, Index_t dy, Index_t dz,
+              bool doSend, bool planeOnly);
+
 #elif defined(USE_EMPI)
 void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
               Index_t dx, Index_t dy, Index_t dz,
-              bool doRecv, bool planeOnly, std::vector<empi::async_event_p>& rpool);
-void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData, std::vector<empi::async_event_p>& rpool);
-void CommSyncPosVel(Domain& domain, std::vector<empi::async_event_p>& rpool);
-void CommMonoQ(Domain& domain, std::vector<empi::async_event_p>& rpool);
+              bool doRecv, bool planeOnly, std::vector<empi::async_event_p>& rpool, std::unique_ptr<empi::MessageGroup>& comm_world);
+void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData, std::vector<empi::async_event_p>& rpool, std::unique_ptr<empi::MessageGroup>& comm_world);
+void CommSyncPosVel(Domain& domain, std::vector<empi::async_event_p>& rpool, std::unique_ptr<empi::MessageGroup>& comm_world);
+void CommMonoQ(Domain& domain, std::vector<empi::async_event_p>& rpool, std::unique_ptr<empi::MessageGroup>& comm_world);
+void CommSend(Domain& domain, Int_t msgType,
+              Index_t xferFields, Domain_member *fieldData,
+              Index_t dx, Index_t dy, Index_t dz,
+              bool doSend, bool planeOnly, std::unique_ptr<empi::MessageGroup>& comm_world);
 #else
 void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
               Index_t dx, Index_t dy, Index_t dz,
@@ -670,12 +683,12 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
 void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData);
 void CommSyncPosVel(Domain& domain);
 void CommMonoQ(Domain& domain);
-#endif
 void CommSend(Domain& domain, Int_t msgType,
               Index_t xferFields, Domain_member *fieldData,
               Index_t dx, Index_t dy, Index_t dz,
               bool doSend, bool planeOnly);
 
+#endif
 // lulesh-init
 void InitMeshDecomp(Int_t numRanks, Int_t myRank,
                     Int_t *col, Int_t *row, Int_t *plane, Int_t *side);

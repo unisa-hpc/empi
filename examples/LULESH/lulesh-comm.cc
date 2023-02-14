@@ -66,7 +66,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
 #elif defined(USE_EMPI)
 void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
               Index_t dx, Index_t dy, Index_t dz, bool doRecv, bool planeOnly, 
-              std::vector<empi::async_event_p>& rpool)
+              std::vector<empi::async_event_p>& rpool, std::unique_ptr<empi::MessageGroup>& comm_world)
 #else
 void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
               Index_t dx, Index_t dy, Index_t dz, bool doRecv, bool planeOnly)
@@ -148,7 +148,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
       rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm], 
             lxy, fromRank, rtag));
 #elif defined(USE_EMPI)
-      rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank, lxy , rtag));
+      rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank, lxy , rtag));
 #else
       MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm],
                 recvCount, baseType, fromRank, msgType,
@@ -164,7 +164,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
       rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm], 
             lxy, fromRank, rtag));
 #elif defined(USE_EMPI)
-      rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank, lxy, rtag));
+      rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank, lxy, rtag));
 #else
       MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm],
                 recvCount, baseType, fromRank, msgType,
@@ -180,7 +180,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
       rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm], 
             lxz, fromRank, rtag));
 #elif defined(USE_EMPI)
-      rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank, lxz, rtag));
+      rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank, lxz, rtag));
 #else
       MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm],
                 recvCount, baseType, fromRank, msgType,
@@ -196,7 +196,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
       rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm], 
             lxz, fromRank, rtag));
 #elif defined(USE_EMPI)
-      rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank,lxz, rtag));
+      rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank,lxz, rtag));
 #else
       MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm],
                 recvCount, baseType, fromRank, msgType,
@@ -212,7 +212,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
       rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm], 
             lyz, fromRank, rtag));
 #elif defined(USE_EMPI)
-      rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank,lyz, rtag));
+      rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank,lyz, rtag));
 #else
       MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm],
                 recvCount, baseType, fromRank, msgType,
@@ -228,7 +228,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
       rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm], 
             lyz, fromRank, rtag));
 #elif defined(USE_EMPI)
-      rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank,lyz, rtag));
+      rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm], fromRank,lyz, rtag));
 #else
       MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm],
                 recvCount, baseType, fromRank, msgType,
@@ -245,7 +245,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                lz, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,lz, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,lz, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -261,7 +261,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                lx, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,lx, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,lx, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -277,7 +277,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                ly, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank, ly, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank, ly, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -293,7 +293,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                lz, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,lz, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,lz, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -309,7 +309,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                lx, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,lx, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,lx, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -325,7 +325,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                ly, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,ly, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,ly, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -341,7 +341,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                lz, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,lz, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,lz, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -357,7 +357,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                lx, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,lx, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,lx, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -373,7 +373,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                ly, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,ly, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm],  fromRank,ly, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -389,7 +389,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                lz, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,lz, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,lz, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -405,7 +405,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                lx, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,lx, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,lx, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -421,7 +421,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
          rpool.push_back(comm_world.irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], 
                ly, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,ly, rtag));
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + emsg * maxEdgeComm], fromRank,ly, rtag));
 #else
          MPI_Irecv(&domain.commDataRecv[pmsg * maxPlaneComm +
                                          emsg * maxEdgeComm],
@@ -441,7 +441,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           l, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
                                                           emsg * maxEdgeComm + 
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           fromRank,l, rtag));
@@ -463,7 +463,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           l, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
                                                           emsg * maxEdgeComm + 
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           fromRank,l, rtag));
@@ -485,7 +485,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           l, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
                                                           emsg * maxEdgeComm + 
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           fromRank,l, rtag));
@@ -507,7 +507,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           l, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
                                                           emsg * maxEdgeComm + 
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           fromRank,l, rtag));
@@ -529,7 +529,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           l, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
                                                           emsg * maxEdgeComm + 
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           fromRank,l, rtag));
@@ -551,7 +551,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           l, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
                                                           emsg * maxEdgeComm + 
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           fromRank,l, rtag));
@@ -573,7 +573,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           l, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
                                                           emsg * maxEdgeComm + 
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           fromRank,l, rtag));
@@ -595,7 +595,7 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           l, fromRank, rtag));
 #elif defined(USE_EMPI)
-         rpool.push_back(comm_world_s::comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
+         rpool.push_back(comm_world->Irecv(&domain.commDataRecv[pmsg * maxPlaneComm + 
                                                           emsg * maxEdgeComm + 
                                                           cmsg * CACHE_COHERENCE_PAD_REAL], 
                                                           fromRank,l, rtag));
@@ -612,10 +612,15 @@ void CommRecv(Domain& domain, Int_t msgType, Index_t xferFields,
 }
 
 /******************************************/
-
+#if defined(USE_EMPI)
+void CommSend(Domain& domain, Int_t msgType,
+              Index_t xferFields, Domain_member *fieldData,
+              Index_t dx, Index_t dy, Index_t dz, bool doSend, bool planeOnly, std::unique_ptr<empi::MessageGroup>& comm_world)
+#else
 void CommSend(Domain& domain, Int_t msgType,
               Index_t xferFields, Domain_member *fieldData,
               Index_t dx, Index_t dy, Index_t dz, bool doSend, bool planeOnly)
+#endif
 {
 
    if (domain.numRanks() == 1)
@@ -703,7 +708,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lxy, myRank - domain.tp()*domain.tp(), stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - domain.tp()*domain.tp(),lxy, stag));
+         spool.push_back(comm_world->Isend(destAddr, myRank - domain.tp()*domain.tp(),lxy, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank - domain.tp()*domain.tp(), msgType,
@@ -724,7 +729,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lxy, myRank + domain.tp()*domain.tp(), stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + domain.tp()*domain.tp(),lxy, stag));
+         spool.push_back(comm_world->Isend(destAddr, myRank + domain.tp()*domain.tp(),lxy, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank + domain.tp()*domain.tp(), msgType,
@@ -752,7 +757,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lxz, myRank - domain.tp(), stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - domain.tp(), lxz, stag));
+         spool.push_back(comm_world->Isend(destAddr, myRank - domain.tp(), lxz, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank - domain.tp(), msgType,
@@ -775,7 +780,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lxz, myRank + domain.tp(), stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + domain.tp(), lxz, stag));
+         spool.push_back(comm_world->Isend(destAddr, myRank + domain.tp(), lxz, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank + domain.tp(), msgType,
@@ -803,7 +808,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lyz, myRank - 1, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank - 1, lyz, stag));
+         spool.push_back(comm_world->Isend(destAddr, myRank - 1, lyz, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank - 1, msgType,
@@ -826,7 +831,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lyz, myRank + 1, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, myRank + 1, lyz, stag));
+         spool.push_back(comm_world->Isend(destAddr, myRank + 1, lyz, stag));
 #else
          MPI_Isend(destAddr, xferFields*sendCount, baseType,
                    myRank + 1, msgType,
@@ -852,7 +857,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lz, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, lz, stag));
 #else
          MPI_Isend(destAddr, xferFields*dz, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -875,7 +880,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lx, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, lx, stag));
 #else
          MPI_Isend(destAddr, xferFields*dx, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -898,7 +903,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, ly, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, ly, stag));
 #else
          MPI_Isend(destAddr, xferFields*dy, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -921,7 +926,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lz, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, lz, stag));
 #else
          MPI_Isend(destAddr, xferFields*dz, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -944,7 +949,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lx, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, lx, stag));
 #else
          MPI_Isend(destAddr, xferFields*dx, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -967,7 +972,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, ly, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, ly, stag));
 #else
          MPI_Isend(destAddr, xferFields*dy, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -990,7 +995,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lz, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, lz, stag));
 #else
          MPI_Isend(destAddr, xferFields*dz, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1013,7 +1018,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lx, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, lx, stag));
 #else
          MPI_Isend(destAddr, xferFields*dx, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1036,7 +1041,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, ly, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, ly, stag));
 #else
          MPI_Isend(destAddr, xferFields*dy, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1059,7 +1064,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lz, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lz, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, lz, stag));
 #else
          MPI_Isend(destAddr, xferFields*dz, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1082,7 +1087,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, lx, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, lx, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, lx, stag));
 #else
          MPI_Isend(destAddr, xferFields*dx, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1105,7 +1110,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(destAddr, ly, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(destAddr, toRank, ly, stag));
+         spool.push_back(comm_world->Isend(destAddr, toRank, ly, stag));
 #else
          MPI_Isend(destAddr, xferFields*dy, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg]) ;
@@ -1125,7 +1130,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
+         spool.push_back(comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1145,7 +1150,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
+         spool.push_back(comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1165,7 +1170,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
+         spool.push_back(comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1185,7 +1190,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
+         spool.push_back(comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1205,7 +1210,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
+         spool.push_back(comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1225,7 +1230,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
+         spool.push_back(comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1245,7 +1250,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
+         spool.push_back(comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1265,7 +1270,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
          spool.push(comm_world.isend(comBuf, l, toRank, stag));
 #elif defined(USE_EMPI)
-         spool.push_back(comm_world_s::comm_world->Isend(comBuf, toRank, l, stag));
+         spool.push_back(comm_world->Isend(comBuf, toRank, l, stag));
 #else
          MPI_Isend(comBuf, xferFields, baseType, toRank, msgType,
                    MPI_COMM_WORLD, &domain.sendRequest[pmsg+emsg+cmsg]) ;
@@ -1289,7 +1294,7 @@ void CommSend(Domain& domain, Int_t msgType,
 #if defined(USE_MPL_CXX)
 void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData, std::vector<mpl::irequest>&  rpool)
 #elif defined(USE_EMPI)
-void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData, std::vector<empi::async_event_p>&  rpool)
+void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData, std::vector<empi::async_event_p>&  rpool, std::unique_ptr<empi::MessageGroup>& comm_world)
 #else
 void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData) 
 #endif
@@ -1864,7 +1869,7 @@ void CommSBN(Domain& domain, Int_t xferFields, Domain_member *fieldData)
 #if defined(USE_MPL_CXX)
 void CommSyncPosVel(Domain& domain, std::vector<mpl::irequest>&  rpool)
 #elif defined(USE_EMPI)
-void CommSyncPosVel(Domain& domain, std::vector<empi::async_event_p>&  rpool)
+void CommSyncPosVel(Domain& domain, std::vector<empi::async_event_p>&  rpool, std::unique_ptr<empi::MessageGroup>& comm_world)
 #else
 void CommSyncPosVel(Domain& domain) 
 #endif
@@ -2448,7 +2453,7 @@ void CommSyncPosVel(Domain& domain)
 #if defined(USE_MPL_CXX)
 void CommMonoQ(Domain& domain, std::vector<mpl::irequest>&  rpool)
 #elif defined(USE_EMPI)
-void CommMonoQ(Domain& domain, std::vector<empi::async_event_p>&  rpool)
+void CommMonoQ(Domain& domain, std::vector<empi::async_event_p>&  rpool, std::unique_ptr<empi::MessageGroup>& comm_world)
 #else
 void CommMonoQ(Domain& domain)
 #endif

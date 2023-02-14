@@ -25,4 +25,38 @@
 	#define EMPI_CHECKTYPE(type) //Disable function
 #endif
 
+namespace empi{
+
+	constexpr int NOSIZE = 0;
+
+	namespace details{
+		enum mpi_function{
+			send = 1,
+			isend,
+			recv,
+			irecv,
+			bcast,
+			ibcast,
+			allreduce,
+			gatherv,
+			all
+		};
+
+		template<mpi_function f>
+		concept is_send = requires {
+			f == mpi_function::send || f == mpi_function::isend;
+		};
+
+		template<mpi_function f>
+		concept is_recv = requires {
+			f == mpi_function::recv || f == mpi_function::irecv;
+		};
+
+		template<mpi_function f>
+		concept is_all = requires {
+			f == mpi_function::all;
+		};
+	}
+}
+
 #endif /* INCLUDE_EMPI_DEFINES */
