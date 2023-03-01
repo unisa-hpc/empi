@@ -1,4 +1,4 @@
-
+//  mpirun -np 2 a.out 10 3 --> will make n*n matrix and send rows 3,4 (consecutive rows)  
 
 #include <stdio.h>
 #include <math.h>
@@ -34,8 +34,8 @@ int main( int argc, char ** argv )
     n = atoi(argv[1]);
 
     sub_m = atoi(argv[2]);
-    sub_n = atoi(argv[3]);
-    stride = atoi(argv[4]);
+    // sub_n = atoi(argv[3]);
+    // stride = atoi(argv[4]);
     // max_iter = atoi(argv[5]);   //number of iterations to repeat the procedure
 
     char buffer[n*n];
@@ -54,8 +54,8 @@ int main( int argc, char ** argv )
         if ( myid == 0 )
         {   
             tp1 = MPI_Wtime();
-            MPI_Pack( &sendarr[sub_m][sub_n], stride, MPI_INT, buffer, n*n, &position, MPI_COMM_WORLD ) ;
-            MPI_Pack( &sendarr[sub_m + 1][sub_n], stride, MPI_INT, buffer, n*n, &position, MPI_COMM_WORLD ) ;
+            MPI_Pack( &sendarr[sub_m][n], n, MPI_INT, buffer, n*n, &position, MPI_COMM_WORLD ) ;
+            MPI_Pack( &sendarr[sub_m + 1][n], n, MPI_INT, buffer, n*n, &position, MPI_COMM_WORLD ) ;
             tp2 = MPI_Wtime();
             
             t1 = MPI_Wtime();
@@ -68,8 +68,8 @@ int main( int argc, char ** argv )
             MPI_Recv( buffer, n*n, MPI_PACKED, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &mystatus );
             
             tu1 = MPI_Wtime();
-            MPI_Unpack( buffer, n*n, &position, &recarr[sub_m][sub_n], stride, MPI_INT, MPI_COMM_WORLD);
-            MPI_Unpack( buffer, n*n, &position, &recarr[sub_m + 1][sub_n], stride, MPI_INT, MPI_COMM_WORLD);
+            MPI_Unpack( buffer, n*n, &position, &recarr[sub_m][n], n, MPI_INT, MPI_COMM_WORLD);
+            MPI_Unpack( buffer, n*n, &position, &recarr[sub_m + 1][n], n, MPI_INT, MPI_COMM_WORLD);
             tu2 = MPI_Wtime();
             printf("\nUnpacking time:  %lf  us\n", ((tu2 - tu1) * 1e6));
            
