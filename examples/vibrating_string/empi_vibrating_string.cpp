@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+*/
+
 // solve the time-dependent one-dimensional wave equation
 // via a finite difference discretization and explicit time stepping
 

@@ -1,6 +1,6 @@
-//
-// Created by luigi on 03/10/22.
-//
+/*
+* Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+*/
 
 #ifndef INCLUDE_EMPI_ASYNC_EVENT
 #define INCLUDE_EMPI_ASYNC_EVENT

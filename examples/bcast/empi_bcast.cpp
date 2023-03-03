@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+*/
+
 
 #include <chrono>
 #include <cmath>

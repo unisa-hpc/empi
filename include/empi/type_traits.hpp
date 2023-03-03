@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+*/
+
 #ifndef __TYPE_TRAITS_H__
 #define __TYPE_TRAITS_H__
 

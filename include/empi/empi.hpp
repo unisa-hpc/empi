@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+*/
+
 #ifndef __EMPI_H__
 #define __EMPI_H__
 

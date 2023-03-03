@@ -1,6 +1,6 @@
-//
-// Created by luigi on 21/09/22.
-//
+/*
+* Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+*/
 
 #ifndef EMPI_PROJECT_UTILS_HPP
 #define EMPI_PROJECT_UTILS_HPP

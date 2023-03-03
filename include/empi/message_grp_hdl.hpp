@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+*/
+
 #ifndef EMPI_PROJECT_MGH_HPP
 #define EMPI_PROJECT_MGH_HPP
 

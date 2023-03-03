@@ -1,3 +1,7 @@
+/*
+* Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+*/
+
 #ifndef INCLUDE_EMPI_DEFINES
 #define INCLUDE_EMPI_DEFINES
 

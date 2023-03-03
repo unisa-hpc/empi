@@ -1,3 +1,5 @@
+# Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+
 #!/bin/bash
 SIZE=$1
 ITER=$2

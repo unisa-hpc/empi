@@ -1,3 +1,7 @@
+# 
+# Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+# 
+
 cmake_minimum_required(VERSION 3.0.0)
 project(empi-project VERSION 0.1.0)
 

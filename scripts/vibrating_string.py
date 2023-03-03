@@ -1,3 +1,5 @@
+# Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+
 #!/usr/bin/python3
 import common
 from common import run_experiment

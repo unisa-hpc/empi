@@ -1,3 +1,5 @@
+# Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+
 macro(create_example TARGET_NAME SRC_FILE)
     add_executable(${TARGET_NAME} ${SRC_FILE})
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)

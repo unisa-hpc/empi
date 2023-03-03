@@ -1,7 +1,8 @@
+
+# Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+
 #!/usr/bin/env python3
-"""
-Copyright (c) 2023, Luigi Crisci
-"""
+
 import sys
 import command
 import argparse

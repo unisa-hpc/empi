@@ -1,3 +1,7 @@
+# 
+# Copyright (c) 2022-2023 University of Salerno, Italy. All rights reserved.
+# 
+
 # Find catch_discore_tests
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/lib/Catch2/contrib)
 include(CTest)
