@@ -47,7 +47,6 @@ int main(int argc, char **argv) {
 
   for(auto iter = 0; iter < max_iter; iter++){
     MPI_Allreduce(arr.data(), dest.data(), n, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
-    iter++;
   }
 
   MPI_Barrier(MPI_COMM_WORLD);
