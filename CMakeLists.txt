@@ -3,13 +3,17 @@
 # 
 
 cmake_minimum_required(VERSION 3.0.0)
-project(empi-project)	
+
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
+  cmake_policy(SET CMP0135 NEW) # ExternalProject downloads will have archive timestamps
+endif()
 
 set(EMPI_VERSION 0.1.0)
 set(EMPI_VERSION_MAJOR 0)
 set(EMPI_VERSION_MINOR 1)
 set(EMPI_VERSION_PATCH 0)
 
+project(empi-project VERSION "${EMPI_VERSION}" LANGUAGES CXX)	
 
 set(CMAKE_CXX_STANDARD 20)
 include(FindMPI REQUIRED)
