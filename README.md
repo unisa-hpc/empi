@@ -1,4 +1,19 @@
 # EMPI: Enhanced Message Passing Interface in Modern C++
+
+## Publications:
+[Link to the paper](https://ieeexplore.ieee.org/abstract/document/10171546)
+```
+@inproceedings{beni2023empi,
+  title={EMPI: Enhanced Message Passing Interface in Modern C++},
+  author={Beni, Majid Salimi and Crisci, Luigi and Cosenza, Biagio},
+  booktitle={2023 IEEE/ACM 23rd International Symposium on Cluster, Cloud and Internet Computing (CCGrid)},
+  pages={141--153},
+  year={2023},
+  organization={IEEE}
+}
+```
+
+## About
 EMPI is a C++ library that aims to enhance the MPI programming model's interface while providing competitive performance to OpenMPI. Its objective is to provide a more modern and straightforward interface to MPI while exploiting C++ language features to reduce programming errors and improve performance. It is developed using C++20, exploiting several modern C++ features. 
 
 ***CAVEAT: EMPI is highly experimental and its interface and features will probably change frequently***
