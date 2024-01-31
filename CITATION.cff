@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+conference-paper: "2023 IEEE/ACM 23rd International Symposium on Cluster, Cloud and Internet Computing (CCGrid)" 
+authors: 
+- family-names: "Beni"
+  given-names: "Majid Salimi"
+- family-names: "Luigi"
+  given-names: "Crisci"
+- family-names: "Biagio"
+  given-names: "Cosenza"
+title: "EMPI: Enhanced Message Passing Interface in Modern C++"
+version: 2.0.4
+doi: 10.1109/CCGrid57682.2023.00023
+date-released: 2023-05-01
+url: "https://github.com/unisa-hpc/empi"

@@ -77,8 +77,18 @@ For example, to run all the microbenchmarks with:
 python3 minibench.py --num_proc=4 --size=2 --app_iter=10 --app_restart=20 --root 
 ```
 
+## Cite this work
+If you use this software, please cite it as below.
+```
+@INPROCEEDINGS{10171546,
+  author={Beni, Majid Salimi and Crisci, Luigi and Cosenza, Biagio},
+  booktitle={2023 IEEE/ACM 23rd International Symposium on Cluster, Cloud and Internet Computing (CCGrid)}, 
+  title={EMPI: Enhanced Message Passing Interface in Modern C++}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={141-153},
+  keywords={Multiprotocol label switching;Message passing;Computational modeling;Semantics;C++ languages;Computer architecture;Programming;Message Passing Interface (MPI);Modern C++;Programming Models;High Performance Computing},
+  doi={10.1109/CCGrid57682.2023.00023}}
 
-
-
-
-
+```
