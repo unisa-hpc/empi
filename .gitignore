@@ -4,3 +4,4 @@ tmp/cmake-build-debug/
 .idea/
 *build*/
 .cache/
+.clangd/
