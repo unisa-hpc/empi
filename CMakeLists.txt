@@ -21,11 +21,16 @@ include(FindMPI REQUIRED)
 option(ENABLE_UNCHECKED_FUNCTION "Enable unchecked function (requires custom OMPI)" ON)
 option(BUILD_EXAMPLES "Build Examples" OFF)
 option(ENABLE_TESTS "Enable testing" OFF)
+option(ENABLE_SANITIZER "Enable sanitizer" OFF)
 
 # Default build flags
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -DDEBUG -fno-omit-frame-pointer" CACHE STRING "Flags used by the C++ compiler during debug builds." FORCE)
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -DNDEBUG -march=native -ffast-math -g -fno-omit-frame-pointer" CACHE STRING "Flags used by the C++ compiler during release builds with debug info." FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -ffast-math" CACHE STRING "Flags used by the C++ compiler during release builds." FORCE)
+
+if (ENABLE_SANITIZER)
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address,undefined,leak")
+endif()
 
 set(CONFIG_PATH "${CMAKE_CURRENT_BINARY_DIR}/include/empi/config.hpp")
 configure_file(
